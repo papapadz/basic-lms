@@ -81,9 +81,11 @@ class CourseController extends Controller
         $course->course_slug = $request->course_slug;
         $course->course_description = $request->course_description;
         if($request->hasFile('course_image')) {
-
-            $image  = $request->file('course_image')->store('courses');
-            $course->course_image = Storage::url($image);          
+            $filename = $fileName = time().'.'.$request->course_image->extension();
+            $request->course_image->move(public_path('images/courses'), $fileName);
+            $course->course_image = $filename;
+            // $image  = $request->file('course_image')->store('courses');
+            // $course->course_image = Storage::url($image);          
         }
         $course->save();
         return redirect()->route('admin.courses.index')->with('message', 'Course successfully updated!');
@@ -136,8 +138,11 @@ class CourseController extends Controller
         $course->course_slug = $request->course_slug;
         $course->course_description = $request->course_description;
         if($request->hasFile('course_image')) {
-            $image       = $request->file('course_image')->store('courses');
-            $course->course_image = Storage::url($image);
+            $filename = $fileName = time().'.'.$request->course_image->extension();
+            $request->course_image->move(public_path('images/courses'), $fileName);
+            $course->course_image = $filename;
+            // $image       = $request->file('course_image')->store('courses');
+            // $course->course_image = Storage::url($image);
         }
         $course->save();
         return redirect()->route('admin.courses.index')->with('message', 'Course successfully updated!');

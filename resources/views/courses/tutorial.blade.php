@@ -45,16 +45,23 @@
 </head>
 <body>
 <header>
-
-    <div class="navbar navbar-dark shadow-sm">
-        <div class="container d-flex justify-content-between">
-            <a href="{{route('homepage')}}" class="navbar-brand d-flex align-items-center">
-                <strong>LMSEANG</strong>
-                <a class="btn btn-sm btn-warning float-right" href="{{route('admin')}}">Admin Panel</a>
-                <a class="btn btn-sm btn-primary" href="{{route('homepage')}}">Dashboard</a>
-            </a>
+    <nav class="navbar navbar-dark shadow-sm">
+        <a class="navbar-brand" href="{{route('homepage')}}">MMMH&MC Online Learning System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
+            </li>
+            <li  class="nav-item">
+                <a class="nav-link" href="{{route('admin')}}"><i class="fa fa-user"></i> Login</a>
+            </li>
+          </ul>
         </div>
-    </div>
+      </nav>
 </header>
 
 <style>
@@ -67,15 +74,26 @@
     <div class="row justify-content-center">
         <div class="col-md-9">
             <div class="card">
-                <div class="card-header">{{$course->course_name}} - Online Course</div>
+                <div class="card-header">
+                    {{$course->course_name}} - Online Course <a class="btn border-danger btn-sm float-right" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
+                </div>
 
                 <div class="card-body">
 
                     <div class="card-body" id="content">
-                        <h2>Welcome to LMS-EANG!</h2>
-                        <p>With this online learning management system, you can create courses and lessons with your own content! Each course will have it's own modules that you create! View all the available modules below. You can also view the course description on the right hand side.</p>
-                        <p>To create more modules, click the "Add Module" button! Have fun creating courses with this tool!</p>
-                        <p>Thank you so much for checking out this project! - Erwin</p>
+                        <h2>Welcome to MMMHMC BLS-Recertification Course!</h2>
+                        <p>At the end of this course you are expected to.</p>
+                        <ul>
+                            <li>1. bla bla bla</li>
+                            <li>2. bla bla bla</li>
+                            <li>3. bla bla bla</li>
+                            <li>4. bla bla bla</li>
+                        </ul>
+                        <p>This is a self paced course, you can attend to the course and watch the video lectures.</p>
+                        <p>Do accomplish the pre-tests and post-tests before and after the course.</p>
+                        <p>Good luck!.</p>
+                        <br>
+                        <a class="btn btn-info btn-lg" href="{{url('/')}}/course/{{$course->course_slug}}/{{$modules[0]->module_slug}}">Start Course</a>
                     </div>
                 </div>
             </div>
@@ -83,105 +101,35 @@
         </div>
         <div class="col-md-3">
             <div class="card">
-                <div class="card-header">Description</div>
+                <div class="card-header">Modules</div>
 
                 <div class="card-body">
-
-                    <div class="card-body" id="sidecontent">
-                        <p>Hi there!</p>
-                        <p>This is the section for the course description. You will see the description for the course here. Click another module below to continue.</p>
-
-                    </div>
+                    <ul>
+                        @foreach($modules as $module)
+                        <li><span class="badge badge-info">{{ $loop->iteration }}</span> {{$module->module_name}}</li>
+                        @endforeach
+                      </ul>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-12">
-            <hr>
-            <style>
-                /*center slate to center and make 240, 140px */
-                .lesson-scroller-item {
-                    max-height: 180px;
-                    max-width: 240px;
-                    margin: 0 auto;
-                }
-                div.image-container.active {
-                    border: 5px;
-                    border-style: solid;
-                    border-color: #80A441;
-
-                }
-                .not-active {
-                    text-decoration: none;
-                    color: black;
-                }
-                a:hover{
-                    color: black;
-                    text-decoration: none;
-                }
-            </style>
-            <!--  Demos -->
-            <div class="row">
-                <div class="container lesson-footer">
-
-                    <h5>COURSE MODULES</h5>
-
-                    <div class="owl-carousel">
-
-
-                        <a href="{{url('/course')}}/{{$course->course_slug}}" class="not-active"><div class="lesson-scroller-item" id="0">
-                                <div class="image-container active"><img src="{{url('/images/getting-started.jpg')}}" alt=""></div>
-                                <div class="lesson-title">
-                                    <strong><span class="lesson-module-number">1</span> <span class="text-uppercase">Getting Started</span></strong>
-                                </div></div></a>
-
-
-                        @foreach ($modules as $module)
-
-                        <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}" class="not-active"><div class="lesson-scroller-item">
-                            <div class="image-container {{ (request()->is('*/'. $module->module_slug)) ? 'active' : '' }}" id="{{ $loop->iteration }}">
-                                
-                                @if($module->module_image)      
-                                <img src="{{$module->module_image}}" alt="">
-                                @else
-                                <img src="https://via.placeholder.com/250x140?text={{$module->module_name}}" alt="">
-                                @endif
-                            </div>
-                    <div class="lesson-title">
-                        <strong><span class="lesson-module-number">{{ $loop->iteration+1}}</span> <span class="text-uppercase">{!! $module->module_name !!}</span></strong>
-                       </div></div></a>
-                            @if($loop->last)
-                                <a href="{{url('/')}}/{{$course->course_slug}}/summary" class="not-active"><div class="lesson-scroller-item"><div class="image-container" id="{{ $loop->iteration+1}}"><img src="{{asset('images/summary.png')}}" alt=""></div>
-                                        <div class="lesson-title">
-                                            <strong><span class="lesson-module-number"></span> <span class="text-uppercase">Summary</span></strong>
-                                        </div></div></a>
-
-                    </div>
-                    @endif
-                    @endforeach
-
-                </div>
-            </div>
-        </div>
-<footer class="text-muted">
-</footer>
 <script>
     $(document).ready(function() {
         $('.owl-carousel').owlCarousel({
             margin: 10,
-            nav: true,
-            navText : ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
-            responsive: {
-                0: {
-                    items: 1
-                },
-                600: {
-                    items: 3
-                },
-                1000: {
-                    items: 5
-                }
-            }
+            items: 1
+            // nav: true,
+            // navText : ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
+            // responsive: {
+            //     0: {
+            //         items: 1
+            //     },
+            //     600: {
+            //         items: 3
+            //     },
+            //     1000: {
+            //         items: 5
+            //     }
+            // }
         });
         $('.owl-carousel').trigger('to.owl.carousel', 0)
     })

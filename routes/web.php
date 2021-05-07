@@ -17,12 +17,15 @@ Route::get('/', 'CourseController@homepage')->name('homepage');
 Route::get('course/{course}', 'CourseController@course')->name('course');
 Route::get('course/{course}/{module}', 'CourseController@module')->name('module');
 Route::get('/{course}/summary', 'CourseController@summary')->name('summary');
-Route::get('/admin', 'CourseController@admin')->name('admin');
+Route::get('/admin', 'CourseController@admin')->name('admin')->middleware('auth');
 
 
-Route::prefix('admin')->name('admin.')->group(function (){
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function (){
     Route::resource('courses', 'CourseController');
     Route::resource('modules', 'ModuleController');
 
 });
 
+
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');

@@ -6,21 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <title>Learning Management System - Laravel </title>
-    <script src="https://unpkg.com/feather-icons"></script>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/album/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Bootstrap core CSS -->
     <link href="https://getbootstrap.com/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <!-- Owl Stylesheets -->
-    <link rel="stylesheet" href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.0.0-beta.2.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.0.0-beta.2.4/assets/owl.theme.default.css">
 
     <!-- javascript -->
-    <script src="https://owlcarousel2.github.io/OwlCarousel2/assets/vendors/jquery.min.js"></script>
-    <script src="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/owl.carousel.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2//2.0.0-beta.2.4/owl.carousel.min.js"></script>
 
-
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/4.3/examples/album/album.css" rel="stylesheet">
 
     <style>
         .bd-placeholder-img {
@@ -37,8 +39,7 @@
                 font-size: 3.5rem;
             }
         }
-    </style>
-    <style>
+
         a {
             color: #000000 ;
             text-decoration: none;
@@ -48,37 +49,38 @@
             color: #2A6496;
             text-decoration: none;
         }
+        .navbar {
+            background-color: #2F3955;
+        }
     </style>
-    <!-- Custom styles for this template -->
-    <link href="{{asset('css/lms-eang.css')}}" rel="stylesheet">
+    @yield('styles')
 </head>
 <body>
-<header>
-
-    <div class="navbar navbar-dark shadow-sm">
-        <div class="container d-flex justify-content-between">
-            <a href="{{route('homepage')}}" class="navbar-brand d-flex align-items-center">
-                <strong>LMSEANG</strong>
-                 <a class="btn btn-sm btn-warning float-right" href="{{route('admin')}}">Admin Panel</a>
-                <a class="btn btn-sm btn-primary" href="{{route('homepage')}}">Dashboard</a>
-            </a>
-        </div>
-    </div>
-</header>
-
-<style>
-    .navbar {
-        background-color: #2F3955;
-    }
-</style>
-@yield('content')
+    <header>
+        <nav class="navbar navbar-dark shadow-sm">
+            <a class="navbar-brand" href="{{route('homepage')}}">MMMH&MC Online Learning System</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
+                </li>
+                <li  class="nav-item">
+                    <a class="nav-link" href="{{route('admin')}}"><i class="fa fa-user"></i> Login</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+    </header>
+    <br>
+    @yield('content')
+</body>
 <footer class="text-muted">
     <div class="container">
-        <p class="float-right">
-            <a href="#">Back to top</a>
-        </p>
-        <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
-        <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
+        <p>Learning Management System by IHOMP Unit &copy; {{ Carbon\Carbon::now()->year }}</p>
     </div>
 </footer>
 
@@ -91,6 +93,6 @@
         feather.replace()
     }())
 </script>
-
+@yield('scripts')
 </html>
 

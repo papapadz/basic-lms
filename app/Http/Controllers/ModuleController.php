@@ -63,9 +63,12 @@ class ModuleController extends Controller
         $module->module_content = $request->module_content;
         if($request->hasFile('module_image')) {
 
-            $image       = $request->file('module_image')->store('modules');
-            $module->module_image = Storage::url($image);
+            $filename = $fileName = time().'.'.$request->module_image->extension();
+            $request->module_image->move(public_path('images/modules'), $fileName);
             $module->module_image = $filename;
+            // $image       = $request->file('module_image')->store('modules');
+            // $module->module_image = Storage::url($image);
+            // $module->module_image = $filename;
         }
         $module->save();
         return redirect('admin/modules?course_id='. $module->course_id)->with('message', 'Module successfully created!');
@@ -120,8 +123,11 @@ class ModuleController extends Controller
         $module->module_type = $request->module_type;
         $module->video_url = $request->video_url;
         if($request->hasFile('module_image')) {
-            $image = $request->file('module_image')->store('modules');
-            $module->module_image = Storage::url($image);
+            $filename = $fileName = time().'.'.$request->module_image->extension();
+            $request->module_image->move(public_path('images/modules'), $fileName);
+            $module->module_image = $filename;
+            // $image = $request->file('module_image')->store('modules');
+            // $module->module_image = Storage::url($image);
         }
         $module->save();
         return redirect('admin/modules?course_id='. $module->course_id)->with('message', 'Module successfully created!');
