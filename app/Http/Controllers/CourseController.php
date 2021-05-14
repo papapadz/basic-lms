@@ -106,12 +106,12 @@ class CourseController extends Controller
                 }
             }  
             
-            if($attempts) {
-                $index = (count($attempts)-1);
+            // if(count($attempts)>=1) {
+            //     $index = (count($attempts)-1);
                     
-                if($attempts[$index]->score >= $passing[$index])
-                        $passed = true;
-            }
+            //     if($attempts[$index]->score >= $passing[$index])
+            //             $passed = true;
+            // }
         }
         return view('courses.index', compact('course','questions','attempts','passing','passed'))->with('module', $module)->with('modules', $modules);
     }
