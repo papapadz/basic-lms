@@ -18,7 +18,6 @@ class ModuleController extends Controller
      */
     public function index(Request $request)
     {
-        //
         if ($request->input('course_id')){
             $modules = Module::where("course_id", $request->input('course_id'))->get();
         }else

@@ -5,15 +5,17 @@
     .jumbotron{
         background-image: url("{{asset('images/new-bg.jpg')}}");
         background-size: cover;
-        height: 100%;}
+        height: 100%;
+        }
+    #footer {
+        position: relative;
+    }
 </style>
 @endsection
 
 @section('content')
-
-        <main role="main">
-
-        <section class="jumbotron text-center">
+<main role="main">
+    <section class="jumbotron text-center">
             <div class="container">
                 <font color="white"><h1 class="jumbotron-heading">Learning Management System</h1>
                 <p class="lead text-muted"></p>
@@ -45,8 +47,8 @@
 
 
 
+                </div>
             </div>
         </div>
-
 </main>
 @endsection

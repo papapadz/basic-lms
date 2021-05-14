@@ -13,4 +13,8 @@ class Module extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function employeeCourse() {
+        return $this->belongsTo(EmployeeCourse::class,'id','module_id');
+    }
 }

@@ -28,7 +28,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">{{$course->course_name}} - Online Course 
-                    <a class="btn border-danger btn-sm float-right" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
+                    
+                    <a class="btn border-danger btn-sm float-right mr-2" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
                 </div>
 
                 <div class="card-body">
@@ -72,6 +73,5 @@
         var get_active = $('div.image-container.active').attr('id');
         $('.owl-carousel').trigger('to.owl.carousel', get_active);
     })
-
 </script>
 @endsection

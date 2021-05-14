@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 Use Image;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+use Auth;
+use App\EmployeeCourse;
+use App\Quiz;
+use App\EmployeeQuiz;
 
 class CourseController extends Controller
 {
@@ -36,19 +40,70 @@ class CourseController extends Controller
 
     public function course($course)
     {
-//loads a specific course by direct url
+        //loads a specific course by direct url
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $modules = Module::where("course_id", "=", $course->id)->get();
-        return view('courses.tutorial', compact('course'))->with('modules', $modules);
+        $slug = $modules[0]->module_slug;
+
+        $isEnrolled = false;
+        $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
+        if($empCourse)
+            $slug = Module::find($empCourse->module_id)->module_slug;
+
+        $url = url('/course').'/'.$course->course_slug.'/'.$slug;
+        return view('courses.tutorial', compact('course','empCourse','url'))->with('modules', $modules);
     }
 
     public function module($course, $module)
-    {
-//loads a specific lesson's module by direct url
+    {    
+        //loads a specific lesson's module by direct url
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $module = Module::where('module_slug', '=', $module)->firstOrFail();
         $modules = Module::where("course_id", "=", $course->id)->get();
-        return view('courses.index', compact('course'))->with('module', $module)->with('modules', $modules);
+        $questions = [];
+        $passing = [75,80,85];
+        $attempts = 0;
+
+        //tracks the progress
+        $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
+        if($empCourse)
+            $empCourse->update(['module_id'=>$module->id]);
+        else
+            EmployeeCourse::create([
+                'emp_id' => Auth::user()->emp_id, 'course_id' => $course->id, 'module_id' => $module->id
+            ]);
+        
+        //prepare random quiz questions
+        if($module->module_type=='pre' || $module->module_type=='post') {
+            
+            $attempts = EmployeeQuiz::where([
+                ['emp_id',Auth::user()->emp_id], ['course_id',$course->id], ['quiz_type',$module->module_type]
+            ])->orderBy('created_at')->get();
+            
+            if(count($attempts)<3) {
+                if($module->module_type=='pre')
+                    $num_q = 5;
+                else if($module->module_type=='post')
+                    $num_q = 15;
+                $random = $course->quizzes->where('quiz_type', $module->module_type)->pluck('id')->toArray();
+                $arr_q = array_rand($random,$num_q);
+
+                foreach($arr_q as $r) {
+                    $q = Quiz::find($r);
+                    
+                    if($q)
+                        array_push($questions,$q);
+                    else {
+                        if($module->module_type=='exam-pre')
+                            $add_q = $course->quizzes->whereNotIn('id', $arr_q)->where('quiz_type','pre')->first();
+                        else
+                            $add_q = $course->quizzes->whereNotIn('id', $arr_q)->where('quiz_type','post')->first();
+                        array_push($questions,$add_q);
+                    }
+                }
+            }   
+        }
+        return view('courses.index', compact('course','questions','attempts','passing'))->with('module', $module)->with('modules', $modules);
     }
     /**
      * Show the form for creating a new resource.
@@ -168,6 +223,10 @@ class CourseController extends Controller
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $modules = Module::where("course_id", "=", $course->id)->get();
         return view('courses.summary', compact('course'))->with('modules', $modules)->with('course', $course);
+    }
+
+    public function done($course_id) {
+
     }
 
 }

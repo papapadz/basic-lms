@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -37,6 +36,9 @@
         @media (min-width: 768px) {
             .bd-placeholder-img-lg {
                 font-size: 3.5rem;
+            },
+            .footer-dark {
+                margin-bottom: 0
             }
         }
 
@@ -51,6 +53,11 @@
         }
         .navbar {
             background-color: #2F3955;
+        }
+
+        footer {
+            background-color: #2F3955;
+            color: white
         }
     </style>
     @yield('styles')
@@ -68,24 +75,53 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
                 </li>
+              </ul>
+              <ul class="navbar-nav ml-auto">
+                <!-- Authentication Links -->
+                @guest
                 <li  class="nav-item">
                     <a class="nav-link" href="{{route('admin')}}"><i class="fa fa-user"></i> Login</a>
                 </li>
-              </ul>
+                    @if (Route::has('register'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        </li>
+                    @endif
+                @else
+                    @if(Auth::user()->role==1)
+                    <li  class="nav-item">
+                        <a class="nav-link" href="{{route('admin')}}"><i class="fa fa-dashboard"></i> Dashboard</a>
+                    </li>
+                    @endif
+                    <li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            <i class="fa fa-user"></i> {{ Illuminate\Support\Str::title(Auth::user()->employee->lastname) }}, {{ Illuminate\Support\Str::title(Auth::user()->employee->firstname) }}<span class="caret"></span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                                             document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                @endguest
+            </ul>
             </div>
           </nav>
     </header>
-    <br>
     @yield('content')
 </body>
-<footer class="text-muted">
-    <div class="container">
-        <p>Learning Management System by IHOMP Unit &copy; {{ Carbon\Carbon::now()->year }}</p>
-    </div>
-</footer>
+
 
 <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.3/assets/js/vendor/jquery-slim.min.js"><\/script>')</script><script src="https://getbootstrap.com/docs/4.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
     (function () {
         'use strict'

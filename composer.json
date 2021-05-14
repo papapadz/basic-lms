@@ -15,7 +15,8 @@
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
         "laravel/ui": "1.0",
-        "laravelcollective/html": "^6.2"
+        "laravelcollective/html": "^6.2",
+        "tmw/fpdm": "^2.9"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

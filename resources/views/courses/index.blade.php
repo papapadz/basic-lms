@@ -46,10 +46,12 @@
     .owl-carousel{
         touch-action: none;
     }
+
 </style>
 @endsection
 
 @section('content')
+<br>
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col">
@@ -62,7 +64,7 @@
                     <div class="video-responsive">
                         <iframe sandbox="allow-same-origin allow-scripts allow-forms" src="{{$module->video_url}}?rel=0"  frameborder="0" allowfullscreen></iframe>
                     </div>
-                @elseif($module->module_type =='exam')
+                @elseif($module->module_type =='pre' || $module->module_type =='post')
                     @include('courses.exam')
                 @else
                     <div class="card-body">
@@ -114,13 +116,6 @@
                 </div>
             </div>
         </div>
-        {{-- <hr>
-        <div class="col-md-12">
-            <hr>
-            <div class="row">
-                
-            </div>
-        </div> --}}
     </div>
 </div>
 @endsection
@@ -128,6 +123,9 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+
+        $('footer').addClass('fixed-bottom')
+
         owl = $('.owl-carousel').owlCarousel({
             margin: 10,
             items: 1
