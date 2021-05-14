@@ -102,13 +102,14 @@
                             </a>
                             @endforeach
                             
+                            @if(count($modules)==0)
                             <a href="{{url('/')}}/{{$course->course_slug}}/summary" class="not-active">
                                 <div class="lesson-title">
                                     <strong><span class="badge badge-info text-uppercase float-right">Summary</span></strong>
                                 </div>
                                 <div class="lesson-scroller-item"><div class="image-container" id="summary"><img src="{{url('/images/summary.png')}}" alt=""></div>
                             </div></a>
-                            
+                            @endif
     
                         </div>
     

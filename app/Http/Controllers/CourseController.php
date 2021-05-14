@@ -59,10 +59,12 @@ class CourseController extends Controller
         //loads a specific lesson's module by direct url
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $module = Module::where('module_slug', '=', $module)->firstOrFail();
-        $modules = Module::where("course_id", "=", $course->id)->get();
+        $modules = Module::where([
+                ["course_id", "=", $course->id],['module_order',$module->module_order+1]
+            ])->get();
         $questions = [];
         $passing = [75,80,85];
-        $attempts = 0;
+        $attempts = [];
 
         //tracks the progress
         $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();

@@ -124,4 +124,8 @@ class QuizController extends Controller
 
         return $score;
     }
+
+    public function getCertificate(Request $request) {
+
+    }
 }
