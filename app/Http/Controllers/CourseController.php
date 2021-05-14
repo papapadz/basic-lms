@@ -65,6 +65,7 @@ class CourseController extends Controller
         $questions = [];
         $passing = [75,80,85];
         $attempts = [];
+        $passed = false;
 
         //tracks the progress
         $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
@@ -103,9 +104,16 @@ class CourseController extends Controller
                         array_push($questions,$add_q);
                     }
                 }
-            }   
+            }  
+            
+            if($attempts) {
+                $index = (count($attempts)-1);
+                    
+                if($attempts[$index]->score >= $passing[$index])
+                        $passed = true;
+            }
         }
-        return view('courses.index', compact('course','questions','attempts','passing'))->with('module', $module)->with('modules', $modules);
+        return view('courses.index', compact('course','questions','attempts','passing','passed'))->with('module', $module)->with('modules', $modules);
     }
     /**
      * Show the form for creating a new resource.

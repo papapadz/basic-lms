@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function() {
     Route::resource('quiz', 'QuizController');
     Route::post('quiz/submit', 'QuizController@submitQuiz');
     Route::get('course/done/{course_id}','CourseController@done');
+    Route::get('course/get/certificate/{id}','QuizController@getCertificate');
 });
 
 

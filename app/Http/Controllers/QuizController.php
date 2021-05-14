@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\EmployeeQuizAnswers;
 use App\EmployeeQuiz;
 use App\QuizChoice;
+use \FPDM as FPDM;
 
 class QuizController extends Controller
 {
@@ -125,7 +126,26 @@ class QuizController extends Controller
         return $score;
     }
 
-    public function getCertificate(Request $request) {
+    public function getCertificate($id) {
 
+        $attempts = EmployeeQuiz::where([
+            ['emp_id',Auth::user()->emp_id], ['course_id',$id], ['quiz_type','post']
+        ])->orderBy('created_at')->get();
+
+        $passing = [75,80,85];
+        $index = (count($attempts)-1);
+        $cert_date = Carbon::parse($attempts[$index]->created_at);
+        if($attempts[$index]->score >= $passing[$index]) {
+            $cert = 'template/bls_cert.pdf';
+            $fields = array(
+                'name' => Auth::user()->employee->firstname.' '.Auth::user()->employee->lastname,
+                'body' => 'who has successfully completed the Online Basic Life Support Training module conducted by Mariano Marcos Memorial Hospital and Medical Center. Completed this '.$cert_date->format('jS').' day of '.$cert_date->format('F Y')
+            );
+            $pdf = new FPDM(public_path($cert));
+            $pdf->Load($fields, true);
+            $pdf->Merge();
+            $pdf->Output();
+        } else
+        return '<a href="/">You did not pass the Post Test. Please coordinate with PETU to schedule a face to face training. Thank you</a>';
     }
 }

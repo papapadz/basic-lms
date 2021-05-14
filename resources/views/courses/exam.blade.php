@@ -24,6 +24,9 @@
         <span class="float-right">Attempts: <h4><b id="span-attempt">{{ count($attempts) }}/3</b></h4></span>
     @else
     <br>
+        @if($passed)
+            <div class="alert alert-success">View your Certificate of Completion <strong><a target="_blank" href="{{ url('/course/get/certificate/'.$course->id) }}">here.</a></strong></div>
+        @endif
         <div class="alert alert-warning">You have already exhausted your quiz attempts</div>
         <ul class="list-group">
             @foreach ($attempts as $k => $attempt)
