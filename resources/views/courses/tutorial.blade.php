@@ -9,7 +9,6 @@
                 <div class="card-header">
                     {{$course->course_name}} - Online Course <a class="btn border-danger btn-sm float-right" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
                 </div>
-
                 <div class="card-body">
 
                     <div class="card-body" id="content">
@@ -42,17 +41,38 @@
         </div>
         <div class="col-md-3">
             <div class="card">
-                <div class="card-header">Modules</div>
-
-                <div class="card-body">
-                    <ul>
-                        @foreach($modules as $module)
-                        <li><span class="badge badge-info">{{ $loop->iteration }}</span> {{$module->module_name}}</li>
-                        @endforeach
-                      </ul>
+                <div class="card-header">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: {{ ($empCourse->module->module_order/count($modules)) *100 }}%" aria-valuemin="0" aria-valuemax="100">
+                            {{ $empCourse->module->module_order }} of {{ count($modules) }} 
+                        </div>
+                    </div>
                 </div>
+                <ul class="list-group list-group-flush">
+                    @foreach($modules as $module)
+                        <li class="list-group-item @if($empCourse->module->module_order==$loop->iteration) bg-primary @endif" @if($loop->iteration>5) hidden @endif>
+                            <span class="badge badge-info">{{ $loop->iteration }}</span> 
+                            @if($loop->iteration<$empCourse->module->module_order)
+                                <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
+                                <i class="fa fa-check-circle text-success float-right"></i>
+                            @else
+                                {{$module->module_name}}
+                            @endif
+                        </li>
+                    @endforeach
+                    <li id="view-all-button" class="list-group-item"><button class="btn btn-sm" onclick="loadAll()">View all</button></li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function loadAll() {
+        $('#view-all-button').remove()
+        $('li.list-group-item').prop('hidden',false)
+    }
+</script>
 @endsection

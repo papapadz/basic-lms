@@ -14,4 +14,8 @@ class Employee extends Model
     public function user() {
         return $this->hasOne(User::class,'emp_id','emp_id');
     }
+
+    public function position() {
+        return $this->hasOne(Position::class,'position_id','position_id');
+    }
 }

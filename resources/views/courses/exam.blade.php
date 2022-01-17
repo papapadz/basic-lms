@@ -1,5 +1,5 @@
 <div class="col-12 mb-2">
-    @if(count($attempts)<3)
+    @if(!$passed)
         <form id="exam">
             @csrf
             <input type="text" name="time_start" value="{{ Carbon\Carbon::now()->toDateTimeString() }}" hidden>
@@ -24,18 +24,19 @@
         <span class="float-right">Attempts: <h4><b id="span-attempt">{{ count($attempts) }}/3</b></h4></span>
     @else
     <br>
-        @if($passed)
+        {{-- @if($passed)
             <div class="alert alert-success">View your Certificate of Completion <strong><a target="_blank" href="{{ url('/course/get/certificate/'.$course->id) }}">here.</a></strong></div>
-        @endif
-        <div class="alert alert-warning">You have already exhausted your quiz attempts</div>
+        @endif 
+        <div class="alert alert-warning">You have already exhausted your quiz attempts</div> --}}
         <ul class="list-group">
             @foreach ($attempts as $k => $attempt)
                 <li class="list-group-item">Attempt #{{ ($k+1) }} 
                     <span class="badge badge-info">Date: {{ Carbon\Carbon::parse($attempt->created_at)->toDateString() }}</span>
                     <span class="badge badge-primary">Score: {{ $attempt->score }}%</span>
                     <span class="badge badge-warning">Time: {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins</span>
-                    @if($attempt->score>=$passing[$k])
+                    @if($attempt->score>=$passing[$k]->score)
                         <span class="badge badge-success">Passed</span>
+                        <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
                     @else
                         <span class="badge badge-danger">Failed</span>
                     @endif
@@ -103,12 +104,12 @@ function save() {
         Swal.fire({
             position: 'top-center',
             icon: 'success',
-            title: 'Congratulations, you got '+response+' points! You may proceed to the next module now.',
+            title: 'Congratulations, you got '+response+'%! You may proceed to the next module now.',
             showConfirmButton: false,
             timer: 5000
         })
-        percentage = Number(response/parentDiv.length) * 100
-        $('#span-score').append('Score: <h4><b>'+parseInt(percentage)+'%</b></h4>')
+        // percentage = Number(response/parentDiv.length) * 100
+        $('#span-score').append('Score: <h4><b>'+parseFloat(response).toFixed(2)+'%</b></h4>')
         document.getElementById("span-attempt").innerHTML = Number('{{ count($attempts) }}') + 1 + '/3'
     });
 }

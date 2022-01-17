@@ -11,6 +11,8 @@ use Auth;
 use App\EmployeeCourse;
 use App\Quiz;
 use App\EmployeeQuiz;
+use App\QuizPassingRate;
+use App\QuizCertificate;
 
 class CourseController extends Controller
 {
@@ -63,7 +65,8 @@ class CourseController extends Controller
                 ["course_id", "=", $course->id],['module_order',$module->module_order+1]
             ])->get();
         $questions = [];
-        $passing = [75,80,85];
+        $passing = QuizPassingRate::where('course_id',$course->id)->orderBy('attempt')->get();
+        
         $attempts = [];
         $passed = false;
 
@@ -84,34 +87,45 @@ class CourseController extends Controller
             ])->orderBy('created_at')->get();
             
             if(count($attempts)<3) {
-                if($module->module_type=='pre')
-                    $num_q = 5;
-                else if($module->module_type=='post')
-                    $num_q = 15;
-                $random = $course->quizzes->where('quiz_type', $module->module_type)->pluck('id')->toArray();
-                $arr_q = array_rand($random,$num_q);
 
-                foreach($arr_q as $r) {
-                    $q = Quiz::find($r);
-                    
-                    if($q)
-                        array_push($questions,$q);
-                    else {
-                        if($module->module_type=='exam-pre')
-                            $add_q = $course->quizzes->whereNotIn('id', $arr_q)->where('quiz_type','pre')->first();
-                        else
-                            $add_q = $course->quizzes->whereNotIn('id', $arr_q)->where('quiz_type','post')->first();
-                        array_push($questions,$add_q);
+                if(count($attempts)>0) {
+                    foreach($attempts as $k => $attempt)
+                        if($attempt->score>=$passing[$k]->score) {
+                            $passed = true;
+                            break;
+                        }
+                }
+
+                if(!$passed) {
+                    if($module->module_type=='pre')
+                        $num_q = 5;
+                    else if($module->module_type=='post')
+                        $num_q = 15;
+                    $random = $course->quizzes->where('quiz_type', $module->module_type)->pluck('id')->toArray();
+                    $arr_q = array_rand($random,$num_q);
+
+                    foreach($arr_q as $r) {
+                        $q = Quiz::find($r);
+                        
+                        if($q)
+                            array_push($questions,$q);
+                        else {
+                            if($module->module_type=='exam-pre')
+                                $add_q = $course->quizzes->whereNotIn('id', $arr_q)->where('quiz_type','pre')->first();
+                            else
+                                $add_q = $course->quizzes->whereNotIn('id', $arr_q)->where('quiz_type','post')->first();
+                            array_push($questions,$add_q);
+                        }
                     }
                 }
             }  
             
-            if(count($attempts)>=1) {
-                $index = (count($attempts)-1);
+            // if(count($attempts)>=1) {
+            //     $index = (count($attempts)-1);
                     
-                if($attempts[$index]->score >= $passing[$index])
-                        $passed = true;
-            }
+            //     if($attempts[$index]->score >= $passing[$index]->score)
+            //             $passed = true;
+            // }
         }
         return view('courses.index', compact('course','questions','attempts','passing','passed'))->with('module', $module)->with('modules', $modules);
     }

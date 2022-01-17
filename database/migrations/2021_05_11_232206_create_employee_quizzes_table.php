@@ -20,7 +20,7 @@ class CreateEmployeeQuizzesTable extends Migration
             $table->dateTime('start');
             $table->dateTime('end');
             $table->string('quiz_type');
-            $table->integer('score');
+            $table->double('score',5,2);
             $table->timestamps();
         });
     }
