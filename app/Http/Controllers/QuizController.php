@@ -174,4 +174,30 @@ class QuizController extends Controller
         } else
         return '<a href="'.url('/').'">You did not pass the Post Test. Please coordinate with PETU to schedule a face to face training. Thank you</a>';
     }
+
+    public static function checkIfPassed($emp_id, $id) {
+        
+        $attempts = EmployeeQuiz::where([
+            ['emp_id',Auth::user()->emp_id], ['course_id',$id], ['quiz_type','post']
+        ])->orderBy('created_at')->get();
+        
+        $passingRates = QuizPassingRate::select('score')->where('course_id',$id)->orderBy('attempt')->get()->toArray();
+        foreach($attempts as $k => $attempt) {
+            if($attempt->score >= $passingRates[$k]['score'])
+                return array(
+                    'passed' => true,
+                    'attempt_id' => $attempt->id,
+                    'attempts' => count($attempts),
+                    'attempt_num' => $attempt->attempt,
+                    'score' => $attempt->score,
+                    'passing_score' => $passingRates[$k]['score'],
+                    'certificate_url' =>  url('/course/get/certificate').'/'.$attempt->id
+                );
+        }
+
+        return array(
+            'passed' => false,
+            'attempts' => count($attempts)
+        );
+    }
 }

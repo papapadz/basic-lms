@@ -46,14 +46,17 @@ class CourseController extends Controller
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $modules = Module::where("course_id", "=", $course->id)->get();
         $slug = $modules[0]->module_slug;
-
+        
         $isEnrolled = false;
         $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
         if($empCourse)
             $slug = Module::find($empCourse->module_id)->module_slug;
 
         $url = url('/course').'/'.$course->course_slug.'/'.$slug;
-        return view('courses.tutorial', compact('course','empCourse','url'))->with('modules', $modules);
+        
+        $attempts = QuizController::checkIfPassed(Auth::user()->emp_id,$course->id);
+        
+        return view('courses.tutorial', compact('course','empCourse','url','attempts'))->with('modules', $modules);
     }
 
     public function module($course, $module)
@@ -95,7 +98,6 @@ class CourseController extends Controller
                             break;
                         }
                 }
-
                 if(!$passed) {
                     if($module->module_type=='pre')
                         $num_q = 5;
@@ -119,7 +121,7 @@ class CourseController extends Controller
                     }
                 }
             }  
-            
+
             // if(count($attempts)>=1) {
             //     $index = (count($attempts)-1);
                     
@@ -247,7 +249,18 @@ class CourseController extends Controller
 //loads a specific course's lessons by direct url - this is the lesson summary
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $modules = Module::where("course_id", "=", $course->id)->get();
-        return view('courses.summary', compact('course'))->with('modules', $modules)->with('course', $course);
+        $attempts = EmployeeQuiz::where([
+            ['emp_id',Auth::user()->emp_id], ['course_id',$course->id], ['quiz_type','post']
+        ])->orderBy('created_at')->get();
+        $passing = QuizPassingRate::where('course_id',$course->id)->orderBy('attempt')->get();
+
+        return view('courses.summary', compact('course'))->with([
+            'modules' => $modules,
+            'course' => $course,
+            'attempts' => $attempts,
+            'passing' => $passing
+        ]);
+
     }
 
     public function done($course_id) {

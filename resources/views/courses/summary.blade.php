@@ -29,11 +29,11 @@
             <div class="card">
                 <div class="card-header">{{$course->course_name}} - Online Course 
                     
-                    <a class="btn border-danger btn-sm float-right mr-2" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
+                    <a class="btn border-danger btn-sm float-right mr-2" href="{{ url('course/'.$course->course_slug) }}"><i class="fa fa-home"></i> Home</a>
                 </div>
 
                 <div class="card-body">
-                    <h4>Summary</h4>
+                    <h4>Module List</h4>
                     <div class="card-body" id="content">
                         <div class="parent" style="padding: 10px;">
                             @foreach($modules as $module)
@@ -43,6 +43,29 @@
                             @endforeach
                         </div>
                     </div>
+                </div>
+
+                <div class="card-footer">
+                    <h4>Post Test Results</h4>
+                    @foreach ($attempts as $k => $attempt)
+                        <li class="list-group-item">Attempt #{{ ($k+1) }} 
+                            <span class="badge badge-info">Date: {{ Carbon\Carbon::parse($attempt->created_at)->toDateString() }}</span>
+                            <span class="badge badge-primary">Score: {{ $attempt->score }}%</span>
+                            <span class="badge badge-warning">Time: 
+                                @if(Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at)<=0)
+                                    {{ Carbon\Carbon::parse($attempt->start)->diffInSeconds($attempt->created_at) }} seconds
+                                @else
+                                    {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins
+                                @endif
+                            </span>
+                            @if($attempt->score>=$passing[$k]->score)
+                                <span class="badge badge-success">Passed</span>
+                                <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                            @else
+                                <span class="badge badge-danger">Failed</span>
+                            @endif
+                        </li>
+                    @endforeach
                 </div>
             </div>
         </div>
