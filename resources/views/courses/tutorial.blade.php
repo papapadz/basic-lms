@@ -49,8 +49,10 @@
             <div class="card">
                 <div class="card-header">
                     <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: @if($attempts['attempts']<3) {{ ($empCourse->module->module_order/count($modules)) *100 }}% @else 100% @endif" aria-valuemin="0" aria-valuemax="100">
-                            @if($attempts['attempts']<3)
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @if($empCourse==null) 0% @elseif($attempts['attempts']<3) {{ ($empCourse->module->module_order/count($modules)) *100 }}% @else 100% @endif" aria-valuemin="0" aria-valuemax="100">
+                            @if($empCourse==null)
+                                Not yet started
+                            @elseif($attempts['attempts']<3)
                                 {{ $empCourse->module->module_order }} of {{ count($modules) }}
                             @else
                                 Completed
@@ -60,11 +62,15 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     @foreach($modules as $module)
-                        <li class="list-group-item @if($empCourse->module->module_order==$loop->iteration && $attempts['attempts']<3) bg-primary @endif" @if($loop->iteration>5) hidden @endif>
+                        <li class="list-group-item @if($empCourse!=null && $empCourse->module->module_order==$loop->iteration && $attempts['attempts']<3) bg-primary @endif" @if($loop->iteration>5) hidden @endif>
                             <span class="badge badge-info">{{ $loop->iteration }}</span> 
-                            @if($loop->iteration<$empCourse->module->module_order || $attempts['attempts']>=3)
-                                <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
-                                <i class="fa fa-check-circle text-success float-right"></i>
+                            @if($empCourse!=null)
+                                @if($loop->iteration<$empCourse->module->module_order || $attempts['attempts']>=3)
+                                    <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
+                                    <i class="fa fa-check-circle text-success float-right"></i>
+                                @else
+                                    {{$module->module_name}}
+                                @endif
                             @else
                                 {{$module->module_name}}
                             @endif
