@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\EmployeeQuizAnswers;
 use App\EmployeeQuiz;
+use App\Quiz;
 use App\QuizChoice;
 use App\QuizPassingRate;
 use App\QuizCertificate;
@@ -23,7 +24,13 @@ class QuizController extends Controller
      */
     public function index()
     {
-        //
+        $results = EmployeeQuiz::select('emp_id','quiz_type','course_id')
+            ->where('quiz_type','post')
+            ->groupBy('emp_id','quiz_type','course_id')
+            ->orderBy('created_at','desc')
+            ->get();
+
+        return view('admin.results.index', compact('results'));
     }
 
     /**
@@ -44,7 +51,7 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
-
+        return Quiz::create($request->all());
     }
 
     /**
@@ -92,6 +99,16 @@ class QuizController extends Controller
         //
     }
 
+    public function setChoices(Request $request) {
+        
+        return QuizChoice::create($request->all());
+    }
+
+    public function setPassingRate(Request $request) {
+        
+        return QuizPassingRate::create($request->all());
+    }
+
     //Employee Quizzes
     public function submitQuiz(Request $request) {
 
@@ -102,7 +119,7 @@ class QuizController extends Controller
                 ['course_id',$request->course_id],
                 ['quiz_type',$request->quiz_type]
             ])->count();
-        $passing_score = QuizPassingRate::where([['course_id',$request->course_id],['attempt',($attempt+1)]])->first();
+        $passing_score = QuizPassingRate::where([['course_id',$request->course_id],['exam_type',$request->quiz_type],['attempt',($attempt+1)]])->first();
  
         $final_score = $score = 0;
 
@@ -149,22 +166,15 @@ class QuizController extends Controller
     }
 
     public function getCertificate($id) {
-
-        // $attempts = EmployeeQuiz::where([
-        //     ['emp_id',Auth::user()->emp_id], ['course_id',$id], ['quiz_type','post']
-        // ])->orderBy('created_at')->get();
-
-        //$passing = [75,80,85];
-        //$index = (count($attempts)-1);
-        
-        $quiz = EmployeeQuiz::find($id);
-        if($quiz->certificate) {
+                
+        $quiz = QuizCertificate::find($id);
+        if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
             $cert_date = Carbon::parse($quiz->created_at);
             $cert = 'template/BLS_cert_compiled.pdf';
             $fields = array(
-                'control_num' => 'Control No.: '.$quiz->certificate->control_num,
-                'name' => $quiz->employee->firstname.' '.$quiz->employee->lastname,
-                'position' => $quiz->employee->position->position_title,
+                'control_num' => 'Control No.: '.$quiz->control_num,
+                'name' => $quiz->EmployeeQuiz->employee->firstname.' '.$quiz->EmployeeQuiz->employee->lastname,
+                'position' => $quiz->EmployeeQuiz->employee->position->position_title,
                 'body' => 'for participating in the Basic Life Support Training held on the '.$cert_date->format('jS').' day of '.$cert_date->format('F Y').' at the Mariano Marcos Memorial Hospital and Medical Center Online Learning Management System.'
             );
             $pdf = new FPDM(public_path($cert));
@@ -172,7 +182,7 @@ class QuizController extends Controller
             $pdf->Merge();
             $pdf->Output();
         } else
-        return '<a href="'.url('/').'">You did not pass the Post Test. Please coordinate with PETU to schedule a face to face training. Thank you</a>';
+        return '<a href="'.url('/').'">PETRO is verifying your score, please wait for the verification process. Thank you</a>';
     }
 
     public static function checkIfPassed($emp_id, $id) {
@@ -180,18 +190,24 @@ class QuizController extends Controller
         $attempts = EmployeeQuiz::where([
             ['emp_id',Auth::user()->emp_id], ['course_id',$id], ['quiz_type','post']
         ])->orderBy('created_at')->get();
-        
-        $passingRates = QuizPassingRate::select('score')->where('course_id',$id)->orderBy('attempt')->get()->toArray();
+            
+        $url = url('/course/get/certificate');
+        $passingRates = QuizPassingRate::select('score')->where([['course_id',$id],['exam_type','post']])->orderBy('attempt')->get()->toArray();
         foreach($attempts as $k => $attempt) {
+            
+            if($attempt->certificate)
+                $url = $url.'/'.$attempt->certificate->id;
+
             if($attempt->score >= $passingRates[$k]['score'])
+                
                 return array(
+                    'verified' => ($attempt->verified_at!=null && $attempt->verified_by!=null) ? true : false,
                     'passed' => true,
                     'attempt_id' => $attempt->id,
                     'attempts' => count($attempts),
-                    'attempt_num' => $attempt->attempt,
                     'score' => $attempt->score,
                     'passing_score' => $passingRates[$k]['score'],
-                    'certificate_url' =>  url('/course/get/certificate').'/'.$attempt->id
+                    'certificate_url' =>  $url
                 );
         }
 
@@ -199,5 +215,15 @@ class QuizController extends Controller
             'passed' => false,
             'attempts' => count($attempts)
         );
+    }
+
+    public function verify($course_id, $emp_id) {
+        
+        EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']])->update([
+            'verified_by' => Auth::user()->emp_id,
+            'verified_at' => Carbon::now()->toDateString()
+        ]);
+
+        return redirect()->back()->with('message','Post Test Result has been verified!');
     }
 }

@@ -15,6 +15,7 @@
 
 @section('content')
 <main role="main">
+    @include('components.validation')
     <section class="jumbotron text-center">
             <div class="container">
                 <font color="white"><h1 class="jumbotron-heading">Learning Management System</h1>
@@ -35,7 +36,12 @@
                                 <h4><a href="course/{{$course->course_slug}}">{{$course->course_name}}</a></h4>
                                 <p class="card-text">{{$course->course_description}}
                                 </p>
-                              <a href="course/{{$course->course_slug}}">  <button class="btn btn-info col-md-12">View Course</button></a>
+                              
+                                @if(count($course->modules)>=1 && $course->is_active)
+                                <a href="course/{{$course->course_slug}}"><button class="btn btn-info col-md-12">View Course</button></a>
+                                @else
+                                <button class="btn btn-warning col-md-12" disabled>Coming Soon!</button>
+                                @endif
                             </div>
                         </div>
                     </div>

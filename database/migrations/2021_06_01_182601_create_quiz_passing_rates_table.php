@@ -16,6 +16,7 @@ class CreateQuizPassingRatesTable extends Migration
         Schema::create('quiz_passing_rates', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('course_id');
+            $table->string('exam_type',4);
             $table->integer('attempt')->default(1);
             $table->double('score',5,2)->default(50);
             $table->timestamps();

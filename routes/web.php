@@ -29,11 +29,14 @@ Route::middleware('auth')->group(function() {
     Route::resource('quiz', 'QuizController');
     Route::post('quiz/submit', 'QuizController@submitQuiz');
     Route::get('course/done/{course_id}','CourseController@done');
-    Route::get('course/get/certificate/{id}','QuizController@getCertificate');
+    Route::get('course/get/certificate/{id}','QuizController@getCertificate')->name('get-certificate'); 
 });
 
 
 Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(function (){
     Route::resource('courses', 'CourseController');
     Route::resource('modules', 'ModuleController');
+    Route::post('course/set/active','CourseController@setActive');
+    Route::get('results','QuizController@index');
+    Route::post('results/verify/{course_id}/{emp_id}','QuizController@verify')->name('results.verify');
 });

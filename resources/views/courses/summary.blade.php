@@ -59,8 +59,12 @@
                                 @endif
                             </span>
                             @if($attempt->score>=$passing[$k]->score)
+                                @if($attempt->verified_by!=null && $attempt->verified_at!=null)
                                 <span class="badge badge-success">Passed</span>
                                 <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                                @else
+                                <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                                @endif
                             @else
                                 <span class="badge badge-danger">Failed</span>
                             @endif

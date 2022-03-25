@@ -40,23 +40,28 @@ class CourseController extends Controller
     }
 
 
-    public function course($course)
+    public function course($course_slug)
     {
         //loads a specific course by direct url
-        $course = Course::where('course_slug', '=', $course)->firstOrFail();
-        $modules = Module::where("course_id", "=", $course->id)->get();
-        $slug = $modules[0]->module_slug;
+        $course = Course::where('course_slug', '=', $course_slug)->firstOrFail();
         
-        $isEnrolled = false;
-        $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
-        if($empCourse)
-            $slug = Module::find($empCourse->module_id)->module_slug;
+        if(count($course->modules)>=1 && $course->is_active) {
+            $modules = Module::where("course_id", "=", $course->id)->orderBy('module_order')->get();
+            $slug = $modules[0]->module_slug;
+            
+            $isEnrolled = false;
+            $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
+            if($empCourse)
+                $slug = Module::find($empCourse->module_id)->module_slug;
 
-        $url = url('/course').'/'.$course->course_slug.'/'.$slug;
+            $url = url('/course').'/'.$course->course_slug.'/'.$slug;
+            
+            $attempts = QuizController::checkIfPassed(Auth::user()->emp_id,$course->id);
+            
+            return view('courses.tutorial', compact('course','empCourse','url','attempts'))->with('modules', $modules);
+        } else
+            return redirect()->back()->with('danger-message','Course is still under construction!');
         
-        $attempts = QuizController::checkIfPassed(Auth::user()->emp_id,$course->id);
-        
-        return view('courses.tutorial', compact('course','empCourse','url','attempts'))->with('modules', $modules);
     }
 
     public function module($course, $module)
@@ -66,9 +71,9 @@ class CourseController extends Controller
         $module = Module::where('module_slug', '=', $module)->firstOrFail();
         $modules = Module::where([
                 ["course_id", "=", $course->id],['module_order',$module->module_order+1]
-            ])->get();
+            ])->orderBy('module_order')->get();
         $questions = [];
-        $passing = QuizPassingRate::where('course_id',$course->id)->orderBy('attempt')->get();
+        $passing = QuizPassingRate::where([['course_id',$course->id],['exam_type',$module->module_type]])->orderBy('attempt')->get();
         
         $attempts = [];
         $passed = false;
@@ -89,7 +94,7 @@ class CourseController extends Controller
                 ['emp_id',Auth::user()->emp_id], ['course_id',$course->id], ['quiz_type',$module->module_type]
             ])->orderBy('created_at')->get();
             
-            if(count($attempts)<3) {
+            if(count($attempts)<count($passing)) {
 
                 if(count($attempts)>0) {
                     foreach($attempts as $k => $attempt)
@@ -99,13 +104,19 @@ class CourseController extends Controller
                         }
                 }
                 if(!$passed) {
-                    if($module->module_type=='pre')
-                        $num_q = 5;
-                    else if($module->module_type=='post')
-                        $num_q = 15;
                     $random = $course->quizzes->where('quiz_type', $module->module_type)->pluck('id')->toArray();
-                    $arr_q = array_rand($random,$num_q);
-
+                   
+                    if($module->module_type=='pre')
+                        if(count($random)<5) {
+                            $arr_q = $random;
+                        } else
+                            $arr_q = array_rand($random,5);
+                    else if($module->module_type=='post')
+                        if(count($random)<15) {
+                            $arr_q = $random;
+                        } else
+                            $arr_q = array_rand($random,15);
+                    
                     foreach($arr_q as $r) {
                         $q = Quiz::find($r);
                         
@@ -129,6 +140,7 @@ class CourseController extends Controller
             //             $passed = true;
             // }
         }
+        
         return view('courses.index', compact('course','questions','attempts','passing','passed'))->with('module', $module)->with('modules', $modules);
     }
     /**
@@ -153,15 +165,19 @@ class CourseController extends Controller
     {
         //
         $request->validate([
+            'code' => 'required|max:5',
             'course_name' => 'required|max:255',
             'course_slug' => 'required|unique:courses|max:50',
-            'course_description' => 'max: 800',
+            'course_description' => 'required|max: 800',
+            'content' => 'required|max: 500',
             'course_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         $course = new Course;
         $course->course_name = $request->course_name;
         $course->course_slug = $request->course_slug;
+        $course->code = $request->code;
         $course->course_description = $request->course_description;
+        $course->content = $request->content;
         if($request->hasFile('course_image')) {
             $filename = $fileName = time().'.'.$request->course_image->extension();
             $request->course_image->move(public_path('images/courses'), $fileName);
@@ -248,7 +264,7 @@ class CourseController extends Controller
     {
 //loads a specific course's lessons by direct url - this is the lesson summary
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
-        $modules = Module::where("course_id", "=", $course->id)->get();
+        $modules = Module::where("course_id", "=", $course->id)->orderBy('module_order')->get();
         $attempts = EmployeeQuiz::where([
             ['emp_id',Auth::user()->emp_id], ['course_id',$course->id], ['quiz_type','post']
         ])->orderBy('created_at')->get();
@@ -265,6 +281,15 @@ class CourseController extends Controller
 
     public function done($course_id) {
 
+    }
+
+    public function setActive(Request $request) {
+        $course = Course::find($request->id);
+        
+        if($course->is_active)
+            Course::where('id',$request->id)->update(['is_active'=>false]);
+        else
+            Course::where('id',$request->id)->update(['is_active'=>true]);
     }
 
 }

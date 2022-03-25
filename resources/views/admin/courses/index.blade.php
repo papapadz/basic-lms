@@ -40,6 +40,11 @@
                             <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this course?')"
                                    class="btn btn-xs btn-danger" />
                         </form>
+                        @if($course->is_active)
+                            <button class="btn btn-xs btn-disabled" onclick="setActive('{{$course->id}}')">Deactivate</button>
+                        @else
+                            <button class="btn btn-xs btn-success" onclick="setActive('{{$course->id}}')">Activate</button>
+                        @endif
 
 
                     </td>
@@ -52,4 +57,19 @@
             @endforelse
         </table>
     </div>
+@endsection
+
+@section('additional_scripts')
+<script>
+
+function setActive(id) {
+    $.ajax({
+        method: 'post',
+        url: '{{ url("admin/course/set/active") }}',
+        data: {_token:'{{ csrf_token() }}', id:id}
+    }).done(function(response) {
+        location.reload();
+    })
+}
+</script>
 @endsection

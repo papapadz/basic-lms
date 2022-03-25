@@ -11,11 +11,19 @@ class EmployeeQuiz extends Model
         'emp_id', 'course_id', 'start', 'end', 'quiz_type', 'score'
     ];
 
+    public function course() {
+        return $this->belongsTo(Course::class,'course_id','id');
+    }
+
     public function certificate() {
         return $this->hasOne(QuizCertificate::class,'employee_quiz_id','id');
     }
 
     public function employee() {
         return $this->hasOne(Employee::class,'emp_id','emp_id')->with('position');
+    }
+
+    public function lists($course_id,$emp_id) {
+        return EmployeeQuiz::where([['course_id',$course_id],['emp_id',$emp_id],['quiz_type','post']])->orderBy('created_at')->get();
     }
 }

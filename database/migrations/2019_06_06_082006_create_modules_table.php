@@ -17,7 +17,7 @@ class CreateModulesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');            $table->string('module_name')->nullable();
-            $table->string('module_slug')->unique();
+            $table->string('module_slug');
             $table->string('module_type');
             $table->string('video_url')->nullable();
             $table->longText('module_content')->nullable();

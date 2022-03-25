@@ -77,6 +77,7 @@
             <ul class="nav nav-sidebar">
                 <li class="{{ (request()->is('admin')) ? 'active' : '' }}"><a href="{{url('/admin')}}"><i class="feather-16" data-feather="home"></i> Dashboard</a></li>
                 <li class="{{ (request()->is('admin/courses*')) ? 'active' : '' }}"><a href="{{url('/admin/courses')}}"><i class="feather-16" data-feather="book"></i> Courses</a></li>
+                <li class="{{ (request()->is('admin/results*')) ? 'active' : '' }}"><a href="{{url('/admin/results')}}"><i class="feather-16" data-feather="bar-chart"></i> Post Test Results</a></li>
                 <!--<li class="{{ (request()->is('admin/modules*')) ? 'active' : '' }}"><a href="{{url('/admin/modules')}}"><i class="feather-16" data-feather="file-text"></i> Modules</a></li> -->
             </ul>
         </div>

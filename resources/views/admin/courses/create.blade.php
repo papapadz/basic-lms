@@ -8,10 +8,14 @@
             <div class="form-group">
                 Name:
                 <input type="text" id="course_name" name="course_name" placeholder="ex: Name of Course" class="form-control"/>
+                Course Code:
+                <input type="text" name="code" placeholder="ex: ABC" class="form-control"/>
                 Slug:
                 <input type="text" id="course_slug" name="course_slug" placeholder="ex: name-of-course" class="form-control"/>
                 Description:
                 <textarea class="form-control" rows="5" placeholder="Short course description about the course" name="course_description"></textarea>
+                Welcome Page:
+                <textarea id="summernote" rows="15" name="content"></textarea>
                 Course Image:
                 <br>
                 <input type="file" id="course_image" name = "course_image">
@@ -22,6 +26,12 @@
             </div>
         </form>
     </div>
+    <script>
+        $('#summernote').summernote({
+                tabsize: 2,
+                height: 400
+            });
+    </script>
 @endsection
 
 
@@ -35,7 +45,7 @@
 
 
     $(document).ready(function() {
-
+        
         $('#course_name').on("input", function(e) {
         var str = $("#course_name").val();
         str = str.replace(/[^a-zA-Z0-9\s]/g,"");

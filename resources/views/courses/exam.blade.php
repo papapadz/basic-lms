@@ -1,5 +1,5 @@
 <div class="col-12 mb-2">
-    @if(count($attempts)>=3)
+    @if(count($attempts)>=count($passing))
     <br>
         {{-- @if($passed)
             <div class="alert alert-success">View your Certificate of Completion <strong><a target="_blank" href="{{ url('/course/get/certificate/'.$course->id) }}">here.</a></strong></div>
@@ -12,8 +12,12 @@
                     <span class="badge badge-primary">Score: {{ $attempt->score }}%</span>
                     <span class="badge badge-warning">Time: {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins</span>
                     @if($attempt->score>=$passing[$k]->score)
+                        @if($attempt->verified_by!=null && $attempt->verified_at!=null)
                         <span class="badge badge-success">Passed</span>
                         <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                        @else
+                        <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                        @endif
                     @else
                         <span class="badge badge-danger">Failed</span>
                     @endif
@@ -42,7 +46,7 @@
         </form>
         <button id="submit-button" type="button" onclick="submit()" class="btn btn-primary">Submit</button>
         <span class="float-left" id="span-score"></span>
-        <span class="float-right">Attempts: <h4><b id="span-attempt">{{ count($attempts) }}/3</b></h4></span>    
+        <span class="float-right">Attempts: <h4><b id="span-attempt">{{ count($attempts) }}/{{ count($passing) }}</b></h4></span>    
     @endif
 </div>
 <script>
@@ -109,8 +113,13 @@ function save() {
             timer: 5000
         })
         // percentage = Number(response/parentDiv.length) * 100
-        $('#span-score').append('Score: <h4><b>'+parseFloat(response).toFixed(2)+'%</b></h4>')
-        document.getElementById("span-attempt").innerHTML = Number('{{ count($attempts) }}') + 1 + '/3'
+        attempts = Number('{{ count($attempts) }}')+1
+        passing = Number('{{ count($passing) }}')
+        btnTryAgain = ''
+        if(attempts<passing)
+            btnTryAgain = '<button class="btn btn-xs btn-warning" onclick="location.reload()">Try Again</button>'
+        $('#span-score').append('Score: <h4><b>'+parseFloat(response).toFixed(2)+'%</b></h4>'+btnTryAgain)
+        document.getElementById("span-attempt").innerHTML = attempts + '/' + passing
     });
 }
 </script>

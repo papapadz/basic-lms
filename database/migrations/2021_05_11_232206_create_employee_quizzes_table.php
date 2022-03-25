@@ -21,6 +21,8 @@ class CreateEmployeeQuizzesTable extends Migration
             $table->dateTime('end');
             $table->string('quiz_type');
             $table->double('score',5,2);
+            $table->bigInteger('verified_by')->nullable();
+            $table->dateTime('verified_at')->nullable();
             $table->timestamps();
         });
     }

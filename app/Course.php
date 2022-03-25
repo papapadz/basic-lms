@@ -18,4 +18,8 @@ class Course extends Model
     public function quizzes() {
         return $this->hasMany(Quiz::class,'course_id','id')->with('choices');
     }
+
+    public function passingRates() {
+        return $this->hasMany(QuizPassingRate::class,'course_id','id');
+    }
 }
