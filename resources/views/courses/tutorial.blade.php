@@ -42,7 +42,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: @if($empCourse==null) 0% @elseif($attempts['attempts']<3) {{ ($empCourse->module->module_order/count($modules)) *100 }}% @else 100% @endif" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @if($empCourse==null) 0% @elseif($attempts['attempts']<count($course->passingRates)) {{ ($empCourse->module->module_order/count($modules)) *100 }}% @else 100% @endif" aria-valuemin="0" aria-valuemax="100">
                             @if($empCourse==null)
                                 Not yet started
                             @elseif($attempts['attempts']<count($course->passingRates))
