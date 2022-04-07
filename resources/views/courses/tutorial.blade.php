@@ -30,6 +30,8 @@
                                         Start Course
                                     @endif
                                 </a>
+                            @else
+                                <a class="btn btn-info btn-lg" href="{{ $url }}">Start Course</a>
                             @endif
                     </div>
                 </div>
