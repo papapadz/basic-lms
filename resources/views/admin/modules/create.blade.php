@@ -140,7 +140,7 @@
                 questions[key].choices.push({
                     id: numy,
                     text: null,
-                    isCorrect: false
+                    isCorrect: 0
                 })
                 break
             }
@@ -220,9 +220,11 @@
         
         module_name = 'Pre Test'
         module_slug = 'pre-test'
+        exam_type = 'pre'
         if($('#module_type').val()=='post') {
             module_name = 'Post Test'
             module_slug = 'post-test'
+            exam_type = 'post'
         }
         
         $.ajax({
@@ -235,12 +237,13 @@
                 passing_rate: $('#passing_rate').val(),
                 module_name: module_name,
                 module_slug: module_slug,
+                exam_type: exam_type,
                 module_type: $('#module_type').val(),
                 video_url: null,
                 module_content: null
             }
         }).done(function(response) {
-            console.log(response)
+            window.location.href = '{{ url("admin/modules?course_id=") }}'+$('#course_id').val();
         })
     }
 

@@ -117,8 +117,9 @@ class ModuleController extends Controller
                 }
             }
         }
-
-        return redirect('admin/modules?course_id='. $module->course_id)->with('message', 'Module successfully created!');
+        return 0;
+        //return url('admin/modules?course_id='. $module->course_id);
+        // return redirect('admin/modules?course_id='. $module->course_id)->with('message', 'Module successfully created!');
     }
 
     /**
