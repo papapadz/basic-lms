@@ -20,7 +20,7 @@
             <div class="container">
                 <font color="white"><h1 class="jumbotron-heading">Learning Management System</h1>
                 <p class="lead text-muted"></p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nisi metus, accumsan a tellus eu, dictum porta quam. Mauris vitae nisi vel turpis faucibus congue non vel justo.</p>
+                <p>The Learning Management System of Mariano Marcos Memorial Hospital and Medical Center provides employees with virtual and online learning experience. It provides them with learning materials anywhere and with ease. Select any course available and start learning.</p>
                 </font>
             </div>
         </section>
