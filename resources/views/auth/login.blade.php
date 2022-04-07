@@ -63,5 +63,8 @@
             </div>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <i><small>This Learning Management System is brought to you by IHOMP Unit &copy; 2021</small></i>
+    </div>
 </div>
 @endsection

@@ -3,6 +3,16 @@
 @section('content')
 <br>
 <div class="container">
+    <div class="row justify-content-center">       
+        <div class="col-md-8">
+            <div class="alert alert-primary w-100">
+            <b>Steps in account creation:</b> <br>
+            1. Enter your 6-digit Employee Number (ex. 000123)<br>
+            2. Enter any password at least 6 characters long.<br>
+            3. Click Register
+            </div>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -59,6 +69,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row justify-content-center">
+        <i><small>This Learning Management System is brought to you by IHOMP Unit &copy; 2021</small></i>
     </div>
 </div>
 @endsection

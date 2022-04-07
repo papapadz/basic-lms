@@ -62,7 +62,7 @@
     </style>
     @yield('styles')
 </head>
-<body>
+<body style="background-color: #dfedf5">
     <header>
         <nav class="navbar navbar-dark shadow-sm">
             <a class="navbar-brand" href="{{route('homepage')}}">MMMH&MC Online Learning System</a>
