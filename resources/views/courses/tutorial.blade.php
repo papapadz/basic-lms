@@ -43,12 +43,14 @@
                 <div class="card-header">
                     <div class="progress">
                         <div class="progress-bar bg-success" role="progressbar" style="width: 
-                            @if($empCourse==null) 0% 
+                            @if($empCourse!=null && $empCourse->finished_date!=null) 100% @elseif($empCourse==null) 0% 
                                 @elseif($empCourse->module->module_order <count($modules)) {{ ($empCourse->module->module_order/count($modules)) *100 }}%
                                 @elseif($attempts['attempts']<count($course->passingRates)) {{ ($empCourse->module->module_order/count($modules)) *100 }}% 
                                 @else 100% 
                             @endif" aria-valuemin="0" aria-valuemax="100">
-                            @if($empCourse==null)
+                            @if($empCourse!=null && $empCourse->finished_date!=null)
+                                Completed
+                            @elseif($empCourse==null)
                                 Not yet started
                             @elseif($empCourse->module->module_order <count($modules))    
                                 {{ $empCourse->module->module_order }} of {{ count($modules) }}

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 Use Image;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use Auth;
 use App\EmployeeCourse;
 use App\Quiz;
@@ -262,13 +263,18 @@ class CourseController extends Controller
 
     public function summary($course)
     {
-//loads a specific course's lessons by direct url - this is the lesson summary
+        //loads a specific course's lessons by direct url - this is the lesson summary
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
         $modules = Module::where("course_id", "=", $course->id)->orderBy('module_order')->get();
         $attempts = EmployeeQuiz::where([
             ['emp_id',Auth::user()->emp_id], ['course_id',$course->id], ['quiz_type','post']
         ])->orderBy('created_at')->get();
         $passing = QuizPassingRate::where('course_id',$course->id)->orderBy('attempt')->get();
+        
+        $empCourse = EmployeeCourse::where([['course_id',$course->id],['emp_id',Auth::user()->emp_id]])->first();
+        
+        if(!$empCourse->finished_date)
+            EmployeeCourse::where([['course_id',$course->id],['emp_id',Auth::user()->emp_id]])->update(['finished_date'=>Carbon::now()->toDateTimeString()]);
 
         return view('courses.summary', compact('course'))->with([
             'modules' => $modules,
@@ -276,10 +282,6 @@ class CourseController extends Controller
             'attempts' => $attempts,
             'passing' => $passing
         ]);
-
-    }
-
-    public function done($course_id) {
 
     }
 

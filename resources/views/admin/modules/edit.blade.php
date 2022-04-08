@@ -21,6 +21,9 @@
                 <select class="form-control" id="module_type" name="module_type">
                     <option value="text" <?php if ($module->module_type == 'text') echo ' selected="selected"'; ?>>Text</option>
                     <option value="video" <?php if ($module->module_type == 'video') echo ' selected="selected"'; ?>>Video</option>
+                    <option value="pre" <?php if ($module->module_type == 'pre') echo ' selected="selected"'; ?>>Pre Test</option>
+                    <option value="post" <?php if ($module->module_type == 'post') echo ' selected="selected"'; ?>>Post Test</option>
+                    <option value="link" <?php if ($module->module_type == 'link') echo ' selected="selected"'; ?>>Link</option>
                 </select>
                 <div id="video" class="group">
                     Video Embed URL:

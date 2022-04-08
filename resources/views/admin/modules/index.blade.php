@@ -27,7 +27,16 @@
             @forelse($modules as $module)
 
                 <tr>
-                    <td> @if($module->module_type =='video')<span class="label label-success">video</span>@elseif($module->module_type =='text') <span class="label label-danger">text</span>@else <span class="label label-warning">Quiz</span>@endif <a href="{{route('module', ['course' => $module->course->course_slug, 'module' => $module->module_slug])}}" target="_blank">{{$module->module_name}}</a></td>
+                    <td> 
+                        @if($module->module_type =='video')
+                            <span class="label label-success">video</span>
+                        @elseif($module->module_type =='text') 
+                            <span class="label label-danger">text</span>
+                        @elseif($module->module_type =='link') 
+                            <span class="label label-info">link</span>
+                        @else 
+                            <span class="label label-warning">quiz</span>
+                        @endif <a href="{{route('module', ['course' => $module->course->course_slug, 'module' => $module->module_slug])}}" target="_blank">{{$module->module_name}}</a></td>
                     <td> <a href="{{ route('admin.modules.edit', $module->id) }}" class="btn btn-xs btn-primary">Edit</a>
                         <form method="POST" action="{{route('admin.modules.destroy', $module->id)}}">
                             @csrf
