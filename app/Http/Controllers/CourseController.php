@@ -68,7 +68,7 @@ class CourseController extends Controller
     {    
         //loads a specific lesson's module by direct url
         $course = Course::where('course_slug', '=', $course)->firstOrFail();
-        $module = Module::where('module_slug', '=', $module)->firstOrFail();
+        $module = Module::where([['course_id',$course->id],['module_slug', '=', $module]])->firstOrFail();
         $modules = Module::where([
                 ["course_id", "=", $course->id],['module_order',$module->module_order+1]
             ])->orderBy('module_order')->get();

@@ -16,6 +16,7 @@
                     <option value="video">Video</option>
                     <option value="pre">Pre Test</option>
                     <option value="post">Post Test</option>
+                    <option value="link">Link</option>
                 </select>
                 <div class="textvidonly">
                     Name:

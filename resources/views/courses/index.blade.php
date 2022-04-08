@@ -68,7 +68,7 @@
                     @include('courses.exam')
                 @elseif($module->module_type == 'link')
                 <div class="video-responsive">
-                    <iframe src="{{$module->video_url}}" style="height: 100rem;width: 100%;"></iframe>
+                    <iframe src="{{$module->video_url}}"  frameborder="0" allowfullscreen></iframe>
                 </div>
                 @else
                     <div class="card-body">
