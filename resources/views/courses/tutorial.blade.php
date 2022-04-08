@@ -22,7 +22,7 @@
                                 @else
                                     <button type="button" class="btn btn-warning" disabled>PETRO is still verifying results</button>
                                 @endif
-                            @elseif($attempts['attempts']<count($course->passingRates))
+                            @elseif($attempts['attempts']<count($course->passingRates) || $empCourse)
                                 <a class="btn btn-info btn-lg" href="{{ $url }}">
                                     @if($empCourse)
                                         Resume {{ $empCourse->module->module_name }}
@@ -42,9 +42,16 @@
             <div class="card">
                 <div class="card-header">
                     <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: @if($empCourse==null) 0% @elseif($attempts['attempts']<count($course->passingRates)) {{ ($empCourse->module->module_order/count($modules)) *100 }}% @else 100% @endif" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 
+                            @if($empCourse==null) 0% 
+                                @elseif($empCourse->module->module_order <count($modules)) {{ ($empCourse->module->module_order/count($modules)) *100 }}%
+                                @elseif($attempts['attempts']<count($course->passingRates)) {{ ($empCourse->module->module_order/count($modules)) *100 }}% 
+                                @else 100% 
+                            @endif" aria-valuemin="0" aria-valuemax="100">
                             @if($empCourse==null)
                                 Not yet started
+                            @elseif($empCourse->module->module_order <count($modules))    
+                                {{ $empCourse->module->module_order }} of {{ count($modules) }}
                             @elseif($attempts['attempts']<count($course->passingRates))
                                 {{ $empCourse->module->module_order }} of {{ count($modules) }}
                             @else
@@ -58,7 +65,7 @@
                         <li class="list-group-item @if($empCourse!=null && $empCourse->module->module_order==$loop->iteration && $attempts['attempts']<count($course->passingRates)) bg-primary @endif" @if($loop->iteration>5) hidden @endif>
                             <span class="badge badge-info">{{ $loop->iteration }}</span> 
                             @if($empCourse!=null)
-                                @if($loop->iteration<$empCourse->module->module_order || $attempts['attempts']>=count($course->passingRates))
+                                @if($loop->iteration<$empCourse->module->module_order || $attempts['attempts']>=count($course->passingRates) && $empCourse->module->module_order == $loop->iteration)
                                     <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
                                     <i class="fa fa-check-circle text-success float-right"></i>
                                 @else
