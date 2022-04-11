@@ -21,6 +21,7 @@ class CreateCoursesTable extends Migration
             $table->longText('course_description');
             $table->longText('content');
             $table->string('course_image')->nullable();
+            $table->string('course_cert',100);
             $table->timestamps();
         });
     }

@@ -67,7 +67,7 @@
                         <li class="list-group-item @if($empCourse!=null && $empCourse->module->module_order==$loop->iteration && $attempts['attempts']<count($course->passingRates)) bg-primary @endif" @if($loop->iteration>5) hidden @endif>
                             <span class="badge badge-info">{{ $loop->iteration }}</span> 
                             @if($empCourse!=null)
-                                @if($loop->iteration<$empCourse->module->module_order || $attempts['attempts']>=count($course->passingRates) && $empCourse->module->module_order == $loop->iteration)
+                                @if($empCourse->finished_date!=null || $loop->iteration<$empCourse->module->module_order || $attempts['attempts']>=count($course->passingRates) && $empCourse->module->module_order == $loop->iteration)
                                     <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
                                     <i class="fa fa-check-circle text-success float-right"></i>
                                 @else
@@ -78,7 +78,7 @@
                             @endif
                         </li>
                     @endforeach
-                    @if($attempts['passed'])
+                    @if($attempts['passed'] || ($empCourse!=null && $empCourse->finished_date!=null))
                     <li class="list-group-item bg-primary">
                         <a class="text-white" href="{{ url($course->course_slug.'/'.'summary') }}"><i class="fa fa-list-ul" aria-hidden="true"></i> Summary</a>
                     </li>

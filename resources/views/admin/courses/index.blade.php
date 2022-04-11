@@ -23,7 +23,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Slug</th>
+                <th>Number of Enrollees</th>
                 <th>Action</th>
             </tr>
             @forelse($courses as $course)
@@ -31,8 +31,9 @@
                 <tr>
                     <td>{{ $course->id }}</td>
                     <td><a href="{{route('course', ['course' => $course->course_slug])}}" target="_blank">{{$course->course_name}}</a></td>
-                    <td>{{$course->course_slug}}</td>
-                    <td> <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-xs btn-primary">Edit</a>
+                    <td>{{ count($course->enrollees) }}</td>
+                    <td>
+                        <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-xs btn-primary">Edit</a>
                         <a href="{{url('admin/modules?course_id=')}}{{$course->id}}" class="btn btn-xs btn-warning">Edit Modules</a>
                         <form method="POST" action="{{route('admin.courses.destroy', $course->id)}}">
                             @csrf
@@ -40,13 +41,12 @@
                             <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this course?')"
                                    class="btn btn-xs btn-danger" />
                         </form>
+                        <a class="btn btn-xs btn-info" href="{{ route('admin.enrollees.index', $course->id) }}">View Enrollees</a>
                         @if($course->is_active)
                             <button class="btn btn-xs btn-disabled" onclick="setActive('{{$course->id}}')">Deactivate</button>
                         @else
                             <button class="btn btn-xs btn-success" onclick="setActive('{{$course->id}}')">Activate</button>
                         @endif
-
-
                     </td>
                 </tr>
 

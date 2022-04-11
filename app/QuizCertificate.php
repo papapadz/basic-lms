@@ -13,4 +13,14 @@ class QuizCertificate extends Model
     public function EmployeeQuiz() {
         return $this->belongsTo(EmployeeQuiz::class,'employee_quiz_id','id');
     }
+
+    public function course() {
+        return $this->hasOneThrough(
+            Course::class,
+            EmployeeQuiz::class,
+            'course_id',
+            'id',
+            'employee_quiz_id',
+        );
+    }
 }

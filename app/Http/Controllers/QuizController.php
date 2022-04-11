@@ -12,8 +12,10 @@ use App\QuizChoice;
 use App\QuizPassingRate;
 use App\QuizCertificate;
 use App\Course;
+use App\EmployeeCourse;
 
 use \FPDM as FPDM;
+use Illuminate\Support\Facades\Validator;
 
 class QuizController extends Controller
 {
@@ -157,7 +159,7 @@ class QuizController extends Controller
             
             $count_cert = QuizCertificate::whereBetween('created_at',[$date_now->startOfYear()->toDateString(),$date_now->endOfYear()->toDateString()])->count()+1;
             QuizCertificate::create([
-                'control_num' => 'PTU'.$date_now->year.'-'.Course::find($request->course_id)->code.'-'.str_pad($count_cert, 3, "0", STR_PAD_LEFT),
+                'control_num' => 'PTRO-'.$date_now->year.'-'.Course::find($request->course_id)->code.'-'.str_pad($count_cert, 3, "0", STR_PAD_LEFT),
                 'employee_quiz_id' => $quiz->id
             ]);
         }
@@ -168,14 +170,16 @@ class QuizController extends Controller
     public function getCertificate($id) {
                 
         $quiz = QuizCertificate::find($id);
+        
         if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
             $cert_date = Carbon::parse($quiz->created_at);
-            $cert = 'template/BLS_cert_compiled.pdf';
+            $cert = $quiz->EmployeeQuiz->course->course_cert;
+            $mi = $quiz->EmployeeQuiz->employee->middlename ? ' '.$quiz->EmployeeQuiz->employee->middlename[0].'. ' : ' ';
             $fields = array(
-                'control_num' => 'Control No.: '.$quiz->control_num,
-                'name' => $quiz->EmployeeQuiz->employee->firstname.' '.$quiz->EmployeeQuiz->employee->lastname,
-                'position' => $quiz->EmployeeQuiz->employee->position->position_title,
-                'body' => 'for participating in the Basic Life Support Training held on the '.$cert_date->format('jS').' day of '.$cert_date->format('F Y').' at the Mariano Marcos Memorial Hospital and Medical Center Online Learning Management System.'
+                //'control_num' => 'Control No.: '.$quiz->control_num,
+                'name' => $quiz->EmployeeQuiz->employee->firstname.$mi.$quiz->EmployeeQuiz->employee->lastname,
+                //'position' => $quiz->EmployeeQuiz->employee->position->position_title,
+                //'body' => 'for participating in the Basic Life Support Training held on the '.$cert_date->format('jS').' day of '.$cert_date->format('F Y').' at the Mariano Marcos Memorial Hospital and Medical Center Online Learning Management System.'
             );
             $pdf = new FPDM(public_path($cert));
             $pdf->Load($fields, true);
@@ -219,11 +223,52 @@ class QuizController extends Controller
 
     public function verify($course_id, $emp_id) {
         
-        EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']])->update([
-            'verified_by' => Auth::user()->emp_id,
-            'verified_at' => Carbon::now()->toDateString()
+        // $quiz = EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']])->update([
+        //     'verified_by' => Auth::user()->id,
+        //     'verified_at' => Carbon::now()->toDateString()
+        // ]);
+        $quiz = EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']]);
+        $certificate = $quiz->first()->certificate;
+        $quiz->update([
+                'verified_by' => Auth::user()->id,
+                'verified_at' => Carbon::now()->toDateString()
         ]);
+        $emailController = new EmailController;
+        $emailController->send($certificate);
 
         return redirect()->back()->with('message','Post Test Result has been verified!');
+    }
+
+    public function createCertificate(Request $request) {
+        Validator::make($request->all(), [
+            'emp_id' => 'required',
+            'course_id' => 'required',
+            'score' => 'required|numeric|min:1|max:100'
+        ])->validate();
+        
+        $date_now = Carbon::now();
+        $emp_id = str_pad($request->emp_id, 6, "0", STR_PAD_LEFT);
+
+        $empCourse = EmployeeCourse::where([['emp_id',$emp_id],['course_id',$request->course_id]])->first();
+
+        $quiz = EmployeeQuiz::create([
+            'emp_id' => $emp_id,
+            'course_id' => $request->course_id,
+            'start' => $empCourse->created_at,
+            'end' => $empCourse->finished_date,
+            'quiz_type' => 'post',
+            'score' => $request->score,
+            'verified_by' => Auth::user()->id,
+            'verified_at' => $date_now->toDateTimeString()
+        ]);
+        
+        $count_cert = QuizCertificate::whereBetween('created_at',[$date_now->startOfYear()->toDateString(),$date_now->endOfYear()->toDateString()])->count()+183;
+        $quizCertificate = QuizCertificate::create([
+                'control_num' => 'PTRO-'.$date_now->year.'-'.Course::find($request->course_id)->code.'-'.str_pad($count_cert, 3, "0", STR_PAD_LEFT),
+                'employee_quiz_id' => $quiz->id
+            ]);
+
+        $emailController = new EmailController;
+        $emailController->send($quizCertificate);
     }
 }

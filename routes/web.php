@@ -38,5 +38,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(functi
     Route::resource('modules', 'ModuleController');
     Route::post('course/set/active','CourseController@setActive');
     Route::get('results','QuizController@index');
+    Route::post('generate/certificate','QuizController@createCertificate');
+    Route::get('enrollees/{course_id}','CourseController@enrollees')->name('enrollees.index');
     Route::post('results/verify/{course_id}/{emp_id}','QuizController@verify')->name('results.verify');
 });

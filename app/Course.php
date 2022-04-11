@@ -22,4 +22,8 @@ class Course extends Model
     public function passingRates() {
         return $this->hasMany(QuizPassingRate::class,'course_id','id');
     }
+    
+    public function enrollees() {
+        return $this->hasMany(EmployeeCourse::class,'course_id','id');
+    }
 }

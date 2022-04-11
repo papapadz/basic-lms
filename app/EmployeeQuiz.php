@@ -8,7 +8,7 @@ class EmployeeQuiz extends Model
 {
 
     protected $fillable = [
-        'emp_id', 'course_id', 'start', 'end', 'quiz_type', 'score'
+        'emp_id', 'course_id', 'start', 'end', 'quiz_type', 'score', 'verified_by', 'verified_at'
     ];
 
     public function course() {

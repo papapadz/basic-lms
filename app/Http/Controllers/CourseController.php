@@ -14,6 +14,7 @@ use App\Quiz;
 use App\EmployeeQuiz;
 use App\QuizPassingRate;
 use App\QuizCertificate;
+use App\Employee;
 
 class CourseController extends Controller
 {
@@ -292,6 +293,10 @@ class CourseController extends Controller
             Course::where('id',$request->id)->update(['is_active'=>false]);
         else
             Course::where('id',$request->id)->update(['is_active'=>true]);
+    }
+
+    public function enrollees($course_id) {
+        return view('admin.enrollees.index')->with('course',Course::find($course_id));
     }
 
 }
