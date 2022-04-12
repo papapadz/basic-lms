@@ -262,9 +262,9 @@ class QuizController extends Controller
             'verified_at' => $date_now->toDateTimeString()
         ]);
         
-        $count_cert = QuizCertificate::whereBetween('created_at',[$date_now->startOfYear()->toDateString(),$date_now->endOfYear()->toDateString()])->count()+183;
+        $count_cert = QuizCertificate::whereBetween('created_at',[$date_now->startOfYear()->toDateString(),$date_now->endOfYear()->toDateString()])->count()+266;
         $quizCertificate = QuizCertificate::create([
-                'control_num' => 'PTRO-'.$date_now->year.'-'.Course::find($request->course_id)->code.'-'.str_pad($count_cert, 3, "0", STR_PAD_LEFT),
+                'control_num' => 'PTRO-'.$date_now->year.'-'.str_pad($count_cert, 3, "0", STR_PAD_LEFT),
                 'employee_quiz_id' => $quiz->id
             ]);
 
