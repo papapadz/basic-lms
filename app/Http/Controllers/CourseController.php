@@ -47,7 +47,7 @@ class CourseController extends Controller
         //loads a specific course by direct url
         $course = Course::where('course_slug', '=', $course_slug)->firstOrFail();
         
-        if(count($course->modules)>=1 && $course->is_active) {
+        if((count($course->modules)>=1 && $course->is_active) || $course->enrollees->where('emp_id',Auth::user()->emp_id)->first()) {
             $modules = Module::where("course_id", "=", $course->id)->orderBy('module_order')->get();
             $slug = $modules[0]->module_slug;
             
@@ -180,6 +180,7 @@ class CourseController extends Controller
         $course->code = $request->code;
         $course->course_description = $request->course_description;
         $course->content = $request->content;
+        $course->post_notes = $request->postnote;
         if($request->hasFile('course_image')) {
             $filename = $fileName = time().'.'.$request->course_image->extension();
             $request->course_image->move(public_path('images/courses'), $fileName);

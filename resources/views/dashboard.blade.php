@@ -37,8 +37,10 @@
                                 <p class="card-text">{{$course->course_description}}
                                 </p>
                               
-                                @if(count($course->modules)>=1 && $course->is_active)
-                                <a href="course/{{$course->course_slug}}"><button class="btn btn-info col-md-12">View Course</button></a>
+                                @if($course->enrollees->where('emp_id',Auth::user()->emp_id)->first())
+                                    <a href="course/{{$course->course_slug}}"><button class="btn btn-success col-md-12">Resume Course</button></a>
+                                @elseif(count($course->modules)>=1 && $course->is_active) 
+                                    <a href="course/{{$course->course_slug}}"><button class="btn btn-info col-md-12">View Course</button></a>
                                 @else
                                 <button class="btn btn-warning col-md-12" disabled>Coming Soon!</button>
                                 @endif

@@ -15,12 +15,18 @@
                         {!! $course->content !!}
                         <br>
                             @if($attempts['passed'])
-                                @if($attempts['verified'])
+                                @if($course->needs_verification)
+                                    @if($attempts['verified'])
+                                        <a target="_blank" class="text-white btn btn-lg btn-success" href="{{ $attempts['certificate_url'] }}">
+                                            <i class="fa fa-trophy" aria-hidden="true"></i>  view certificate
+                                        </a>
+                                    @else
+                                        <button type="button" class="btn btn-warning" disabled>PETRO is still verifying results</button>
+                                    @endif
+                                @else
                                     <a target="_blank" class="text-white btn btn-lg btn-success" href="{{ $attempts['certificate_url'] }}">
                                         <i class="fa fa-trophy" aria-hidden="true"></i>  view certificate
                                     </a>
-                                @else
-                                    <button type="button" class="btn btn-warning" disabled>PETRO is still verifying results</button>
                                 @endif
                             @elseif($attempts['attempts']<count($course->passingRates) || $empCourse)
                                 <a class="btn btn-info btn-lg" href="{{ $url }}">

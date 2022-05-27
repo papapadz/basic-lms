@@ -23,6 +23,8 @@
                 <input type="text" name="course_slug" value="{{$course->course_slug }}" class="form-control"/>
                 Description:
                 <textarea class="form-control" rows="5" name="course_description">{{$course->course_description}}</textarea>
+                Post Notes:
+                <textarea class="form-control" rows="5" id="postnote" rows="15" name="postnote">{{$course->post_notes}}</textarea>
                 <br>
                 <img src="{{$course->course_image}}" height="100"/>
                 <input type="file" id="course_image" name = "course_image">

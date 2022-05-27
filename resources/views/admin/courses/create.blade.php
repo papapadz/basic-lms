@@ -16,6 +16,8 @@
                 <textarea class="form-control" rows="5" placeholder="Short course description about the course" name="course_description"></textarea>
                 Welcome Page:
                 <textarea id="summernote" rows="15" name="content"></textarea>
+                Post Notes:
+                <textarea id="postnote" rows="15" name="postnote"></textarea>
                 Course Image:
                 <br>
                 <input type="file" id="course_image" name = "course_image">
@@ -28,9 +30,13 @@
     </div>
     <script>
         $('#summernote').summernote({
-                tabsize: 2,
-                height: 400
-            });
+            tabsize: 2,
+            height: 400
+        });
+        $('#postnote').summernote({
+            tabsize: 2,
+            height: 400
+        });
     </script>
 @endsection
 

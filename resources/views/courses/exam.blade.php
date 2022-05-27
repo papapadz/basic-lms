@@ -1,5 +1,5 @@
 <div class="col-12 mb-2">
-    @if(count($attempts)>=count($passing))
+    @if((count($attempts)>=count($passing)) || $passed)
     <br>
         {{-- @if($passed)
             <div class="alert alert-success">View your Certificate of Completion <strong><a target="_blank" href="{{ url('/course/get/certificate/'.$course->id) }}">here.</a></strong></div>
@@ -12,19 +12,24 @@
                     <span class="badge badge-primary">Score: {{ $attempt->score }}%</span>
                     <span class="badge badge-warning">Time: {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins</span>
                     @if($attempt->score>=$passing[$k]->score)
-                        @if($attempt->verified_by!=null && $attempt->verified_at!=null)
-                        <span class="badge badge-success">Passed</span>
-                        <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
-                        @else
-                        <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
-                        @endif
-                    @else
-                        <span class="badge badge-danger">Failed</span>
-                    @endif
+                                @if($attempt->course->needs_verification)
+                                    @if($attempt->verified_by!=null && $attempt->verified_at!=null)
+                                        <span class="badge badge-success">Passed</span>
+                                        <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                                    @else
+                                        <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                                    @endif
+                                @else
+                                    <span class="badge badge-success">Passed</span>
+                                    <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                                @endif
+                            @elseif($module->module_type=='post')
+                                <span class="badge badge-danger">Failed</span>
+                            @endif
                 </li>
             @endforeach
           </ul>
-    @elseif(!$passed)
+    @else
         <form id="exam">
             @csrf
             <input type="text" name="time_start" value="{{ Carbon\Carbon::now()->toDateTimeString() }}" hidden>

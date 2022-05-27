@@ -33,6 +33,11 @@
                 </div>
 
                 <div class="card-body">
+                    @if($course->post_notes)
+                    <h4>Post Notes</h4>
+                    {!! $course->post_notes !!}
+                    <hr>
+                    @endif
                     <h4>Module List</h4>
                     <div class="card-body" id="content">
                         <div class="parent" style="padding: 10px;">
@@ -59,11 +64,16 @@
                                 @endif
                             </span>
                             @if($attempt->score>=$passing[$k]->score)
-                                @if($attempt->verified_by!=null && $attempt->verified_at!=null)
-                                <span class="badge badge-success">Passed</span>
-                                <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                                @if($attempt->course->needs_verification)
+                                    @if($attempt->verified_by!=null && $attempt->verified_at!=null)
+                                        <span class="badge badge-success">Passed</span>
+                                        <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                                    @else
+                                        <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                                    @endif
                                 @else
-                                <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                                    <span class="badge badge-success">Passed</span>
+                                    <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
                                 @endif
                             @else
                                 <span class="badge badge-danger">Failed</span>

@@ -169,9 +169,9 @@ class QuizController extends Controller
 
     public function getCertificate($id) {
                 
-        $quiz = QuizCertificate::find($id);
-        
-        if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
+        $quiz = QuizCertificate::where('employee_quiz_id',$id)->first();
+
+        //if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
             $cert_date = Carbon::parse($quiz->created_at);
             $cert = $quiz->EmployeeQuiz->course->course_cert;
             $mi = $quiz->EmployeeQuiz->employee->middlename ? ' '.$quiz->EmployeeQuiz->employee->middlename[0].'. ' : ' ';
@@ -185,8 +185,8 @@ class QuizController extends Controller
             $pdf->Load($fields, true);
             $pdf->Merge();
             $pdf->Output();
-        } else
-        return '<a href="'.url('/').'">PETRO is verifying your score, please wait for the verification process. Thank you</a>';
+        //} else
+        //return '<a href="'.url('/').'">PETRO is verifying your score, please wait for the verification process. Thank you</a>';
     }
 
     public static function checkIfPassed($emp_id, $id) {
