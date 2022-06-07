@@ -38,4 +38,8 @@ class User extends Authenticatable
      public function employee() {
          return $this->belongsTo(Employee::class,'emp_id','emp_id');
      }
+
+    public function courseReviewer() {
+        return $this->hasMany(Reviewer::class,'user_id','id');
+    }
 }

@@ -29,8 +29,15 @@ class CourseController extends Controller
      }
     public function index()
     {
-        //
-        $courses = Course::all();
+        if(Auth::User()->role==1)
+            $courses = Course::all();
+        else {
+            $courseAssigned = Auth::User()->courseReviewer;
+            $courseArr = [];
+            foreach($courseAssigned as $course)
+                array_push($courseArr, $course->course_id);
+            $courses = Course::whereIn('id',$courseArr)->get();
+        }
         return view('admin.courses.index')->with('courses',$courses);
     }
 
@@ -47,22 +54,24 @@ class CourseController extends Controller
         //loads a specific course by direct url
         $course = Course::where('course_slug', '=', $course_slug)->firstOrFail();
         
-        if((count($course->modules)>=1 && $course->is_active) || $course->enrollees->where('emp_id',Auth::user()->emp_id)->first()) {
+        if((count($course->modules)>=1 && $course->is_active)) {
             $modules = Module::where("course_id", "=", $course->id)->orderBy('module_order')->get();
             $slug = $modules[0]->module_slug;
             
             $isEnrolled = false;
-            $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
+            $empCourse = EmployeeCourse::where([['emp_id',Auth::User()->emp_id],['course_id',$course->id]])->first();
             if($empCourse)
                 $slug = Module::find($empCourse->module_id)->module_slug;
 
             $url = url('/course').'/'.$course->course_slug.'/'.$slug;
             
-            $attempts = QuizController::checkIfPassed(Auth::user()->emp_id,$course->id);
+            $attempts = QuizController::checkIfPassed(Auth::User()->emp_id,$course->id);
             
             return view('courses.tutorial', compact('course','empCourse','url','attempts'))->with('modules', $modules);
+        } else if($course->enrollees->where('emp_id',Auth::User()->emp_id)->first()) {
+            return redirect()->route('summary',[$course_slug]);
         } else
-            return redirect()->back()->with('danger-message','Course is still under construction!');
+            return redirect()->back()->with('danger-message','Course is not yet available!');
         
     }
 

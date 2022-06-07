@@ -75,6 +75,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('homepage')}}"><i class="fa fa-home"></i> Home</a>
                 </li>
+                @guest
+                @else
+                @if(Auth::User()->role==2)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.courses.index')}}"><i class="fa fa-home"></i> Manage Courses</a>
+                </li>
+                @endif
+                @endguest 
               </ul>
               <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->

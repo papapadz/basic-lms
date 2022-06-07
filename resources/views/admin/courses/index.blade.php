@@ -14,11 +14,12 @@
                 @include('components.validation')
 
         <br/>
-        <a href="{{route('admin.courses.create')}}" class="btn float-right btn-primary">Create New Course</a>
+        @if(Auth::User()->role==1)
+        <a href="{{route('admin.courses.create')}}" class="btn float-right btn-primary">Create New Course</a>   
         <br/>
         <br>
         <br>
-
+        @endif
         <table class="table table-striped">
             <tr>
                 <th>ID</th>

@@ -29,7 +29,7 @@
             <div class="card">
                 <div class="card-header">{{$course->course_name}} - Online Course 
                     
-                    <a class="btn border-danger btn-sm float-right mr-2" href="{{ url('course/'.$course->course_slug) }}"><i class="fa fa-home"></i> Home</a>
+                    <a class="btn border-danger btn-sm float-right mr-2" href="@if($course->is_active) {{ url('course/'.$course->course_slug) }} @else {{ route('homepage') }} @endif"><i class="fa fa-home"></i> Home</a>
                 </div>
 
                 <div class="card-body">
@@ -38,6 +38,7 @@
                     {!! $course->post_notes !!}
                     <hr>
                     @endif
+                    @if($course->is_active)
                     <h4>Module List</h4>
                     <div class="card-body" id="content">
                         <div class="parent" style="padding: 10px;">
@@ -48,11 +49,12 @@
                             @endforeach
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <div class="card-footer">
                     <h4>Post Test Results</h4>
-                    @foreach ($attempts as $k => $attempt)
+                    @forelse ($attempts as $k => $attempt)
                         <li class="list-group-item">Attempt #{{ ($k+1) }} 
                             <span class="badge badge-info">Date: {{ Carbon\Carbon::parse($attempt->created_at)->toDateString() }}</span>
                             <span class="badge badge-primary">Score: {{ $attempt->score }}%</span>
@@ -79,7 +81,9 @@
                                 <span class="badge badge-danger">Failed</span>
                             @endif
                         </li>
-                    @endforeach
+                    @empty
+                    <i class="text-danger">Awaiting Results...</i>
+                    @endforelse
                 </div>
             </div>
         </div>

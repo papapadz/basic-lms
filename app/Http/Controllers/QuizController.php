@@ -26,12 +26,25 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $results = EmployeeQuiz::select('emp_id','quiz_type','course_id')
-            ->where('quiz_type','post')
-            ->groupBy('emp_id','quiz_type','course_id')
-            ->orderBy('created_at','desc')
-            ->get();
-
+        if(Auth::User()->role==1)
+            $results = EmployeeQuiz::select('emp_id','quiz_type','course_id')
+                ->where('quiz_type','post')
+                ->groupBy('emp_id','quiz_type','course_id')
+                ->orderBy('created_at','desc')
+                ->get();
+        else {
+            $courseAssigned = Auth::User()->courseReviewer;
+            $courseArr = [];
+            foreach($courseAssigned as $course)
+                array_push($courseArr, $course->course_id);
+        
+            $results = EmployeeQuiz::select('emp_id','quiz_type','course_id')
+                ->where('quiz_type','post')
+                ->groupBy('emp_id','quiz_type','course_id')
+                ->whereIn('course_id',$courseArr)
+                ->orderBy('created_at','desc')
+                ->get();
+        }
         return view('admin.results.index', compact('results'));
     }
 
