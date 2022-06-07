@@ -54,7 +54,7 @@ class CourseController extends Controller
         //loads a specific course by direct url
         $course = Course::where('course_slug', '=', $course_slug)->firstOrFail();
         
-        if((count($course->modules)>=1 && $course->is_active)) {
+        if((count($course->modules)>=1 && $course->is_active) || Auth::User()->role == 1 || Auth::User()->courseReviewer->where('course_id',$course->id)->first()) {
             $modules = Module::where("course_id", "=", $course->id)->orderBy('module_order')->get();
             $slug = $modules[0]->module_slug;
             
