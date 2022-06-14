@@ -181,7 +181,8 @@ class CourseController extends Controller
             'course_slug' => 'required|unique:courses|max:50',
             'course_description' => 'required|max: 800',
             'content' => 'required|max: 500',
-            'course_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'course_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'course_certificate' => 'required|mimes:pdf'
         ]);
         $course = new Course;
         $course->course_name = $request->course_name;
@@ -197,6 +198,12 @@ class CourseController extends Controller
             // $image  = $request->file('course_image')->store('courses');
             // $course->course_image = Storage::url($image);          
         }
+        if($request->hasFile('course_certificate')) {
+            $filename = $fileName = $request->code.'.'.$request->course_certificate->extension();
+            $request->course_certificate->move(public_path('template'), $fileName);
+            $course->course_cert = $filename;         
+        }
+        $course->needs_verification = $request->needs_verification;
         $course->save();
         return redirect()->route('admin.courses.index')->with('message', 'Course successfully updated!');
     }

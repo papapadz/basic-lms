@@ -28,8 +28,9 @@
                         <textarea id="summernote" rows="15" name="module_content"></textarea>
                     </div>
                     <div id="video" class="group">
-                        Video Embed URL: eg; https://player.vimeo.com/video/8733915 or https://www.youtube.com/embed/6p_yaNFSYao
-                        <input type="text" name="video_url" placeholder="e.g.; https://www.youtube.com/embed/6p_yaNFSYao" class="form-control"/>
+                        <span id="vidlinkonly">Video Embed URL: eg; https://www.youtube.com/embed/6p_yaNFSYao</span>
+                        <span id="linkonly">Enter any URL: eg; https://forms.gle/2Jf73xasd2</span>
+                        <input type="text" name="video_url" placeholder="e.g.; https://www.*****.com/****/****" class="form-control"/>
                     </div>
                     </div>
                     <div class="group testonly">
@@ -255,12 +256,21 @@
         $('#text').show();
         $('#module_type').change(function () {
             $('.group').hide();
-
             if($(this).val()=="pre" || $(this).val()=="post") {
                 $('.textvidonly').hide();
                 $('.testonly').show();
+                $('#linkonly').hide()
+                $('#vidlinkonly').hide()
             } else {
-                $('#'+$(this).val()).show();
+                if($(this).val()=='link') {
+                    $('#video').show();
+                    $('#linkonly').show()
+                    $('#vidlinkonly').hide()
+                }else {
+                    $('#'+$(this).val()).show();
+                    $('#linkonly').hide()
+                    $('#vidlinkonly').show()
+                }
                 $('.textvidonly').show();
                 $('.testonly').hide();
             }
