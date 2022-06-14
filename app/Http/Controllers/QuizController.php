@@ -250,7 +250,7 @@ class QuizController extends Controller
         //     'verified_by' => Auth::user()->id,
         //     'verified_at' => Carbon::now()->toDateString()
         // ]);
-        $quiz = EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']])->get();
+        $quiz = EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']])->get()->pluck('id');
         $certificate = QuizCertificate::whereIn('employee_quiz_id',$quiz->toArray())->first();
         EmployeeQuiz::where('id',$certificate->employee_quiz_id)->update([
                 'verified_by' => Auth::user()->id,
