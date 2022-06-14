@@ -21,6 +21,7 @@
 
         <table class="table table-striped">
             <tr>
+                <th>#</th>
                 <th>Employee ID</th>
                 <th>Name</th>
                 <th>Date Started</th>
@@ -28,8 +29,9 @@
                 <th>Status</th>
                 <th>Action</th>
             </tr>
-            @forelse($course->enrollees as $enrollee)
+            @forelse($course->enrollees as $k => $enrollee)
                 <tr>
+                    <td>{{ $k+1 }}</td>
                     <td>{{ $enrollee->emp_id }}</td>
                     <td>{{ $enrollee->employee->lastname }}, {{ $enrollee->employee->firstname }} {{ $enrollee->employee->middlename }}</td>
                     <td>{{ $enrollee->created_at }}</td>
@@ -46,11 +48,34 @@
                         @endif
                     </td>
                     <td>
-                        @if($enrollee->quiz->where('course_id',$course->id)->first())
-                            <a href="{{ route('get-certificate',$enrollee->quiz->where('course_id',$course->id)->first()->certificate->id) }}">{{ $enrollee->quiz->where('course_id',$course->id)->first()->certificate->control_num }}</a>
-                        @elseif($enrollee->finished_date || ($enrollee->module->module_order/count($course->modules))==1)
-                            <button onclick="showReleaseForm({{ $enrollee->emp_id }},{{ $enrollee->course_id }})" class="btn btn-xs btn-success">Release Certificate</button>
+                        @if($enrollee->finished_date && ($enrollee->module->module_order/count($course->modules))==1)
+                            
+                            @if($course->modules->where('module_type','post')->first())
+                                @if(count($enrollee->quiz->where('course_id',$course->id))>0)
+                                    @php $certCounter = 0; @endphp
+                                    @foreach($enrollee->quiz->where('course_id',$course->id) as $enrolleeQuiz)
+                                        @if($enrolleeQuiz)
+                                            @if($enrolleeQuiz->certificate)
+                                                @php $certCounter++; @endphp
+                                                <a href="{{ route('get-certificate',$enrolleeQuiz->certificate->id) }}">{{ $enrolleeQuiz->certificate->control_num }}</a>
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                    @if($certCounter==0)
+                                        <span class="text-danger"> <i>Not yet passed</i></span>
+                                    @endif
+                                @else
+                                    <span class="text-warning"> <i>No Post Test Attempt yet</i></span>
+                                @endif
+                            @elseif($course->needs_verification) 
+                                <button onclick="showReleaseForm({{ $enrollee->emp_id }},{{ $enrollee->course_id }})" class="btn btn-xs btn-success">Release Certificate</button>
+                            @endif
+
+                        @else
+                            <span class="text-danger"> <i>Pending...</i></span>
                         @endif
+                        
+                        
                     </td>
                 </tr>
             @empty

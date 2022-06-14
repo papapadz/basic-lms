@@ -168,7 +168,7 @@ class QuizController extends Controller
             'score' => $final_score
         ]);
         
-        if($final_score>=$passing_score->score) {
+        if($final_score>=$passing_score->score && $request->quiz_type=='post') {
             
             $count_cert = QuizCertificate::whereBetween('created_at',[$date_now->startOfYear()->toDateString(),$date_now->endOfYear()->toDateString()])->count()+1;
             $certificate = QuizCertificate::create([
