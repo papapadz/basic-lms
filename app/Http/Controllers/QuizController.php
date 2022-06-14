@@ -171,10 +171,20 @@ class QuizController extends Controller
         if($final_score>=$passing_score->score) {
             
             $count_cert = QuizCertificate::whereBetween('created_at',[$date_now->startOfYear()->toDateString(),$date_now->endOfYear()->toDateString()])->count()+1;
-            QuizCertificate::create([
+            $certificate = QuizCertificate::create([
                 'control_num' => 'PTRO-'.$date_now->year.'-'.Course::find($request->course_id)->code.'-'.str_pad($count_cert, 3, "0", STR_PAD_LEFT),
                 'employee_quiz_id' => $quiz->id
             ]);
+
+            $course = Course::find($request->course_id);
+            if(!$course->needs_verification) {
+                EmployeeQuiz::where('id',$quiz->id)->update([
+                    'verified_by' => Auth::user()->id,
+                    'verified_at' => Carbon::now()->toDateString()
+                ]);
+                $emailController = new EmailController;
+                $emailController->send($certificate);
+            }
         }
         
         return $final_score;
@@ -240,9 +250,9 @@ class QuizController extends Controller
         //     'verified_by' => Auth::user()->id,
         //     'verified_at' => Carbon::now()->toDateString()
         // ]);
-        $quiz = EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']]);
-        $certificate = $quiz->first()->certificate;
-        $quiz->update([
+        $quiz = EmployeeQuiz::where([['emp_id',$emp_id], ['course_id',$course_id], ['quiz_type','post']])->get();
+        $certificate = QuizCertificate::whereIn('employee_quiz_id',$quiz->toArray())->first();
+        EmployeeQuiz::where('id',$certificate->employee_quiz_id)->update([
                 'verified_by' => Auth::user()->id,
                 'verified_at' => Carbon::now()->toDateString()
         ]);
