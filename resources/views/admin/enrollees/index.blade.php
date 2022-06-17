@@ -48,7 +48,7 @@
                         @endif
                     </td>
                     <td>
-                        @if($enrollee->finished_date && ($enrollee->module->module_order/count($course->modules))==1)
+                        @if($enrollee->finished_date || ($enrollee->module->module_order/count($course->modules))==1)
                             
                             @if($course->modules->where('module_type','post')->first())
                                 @if(count($enrollee->quiz->where('course_id',$course->id))>0)
