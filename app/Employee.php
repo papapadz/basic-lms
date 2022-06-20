@@ -20,6 +20,10 @@ class Employee extends Model
         return $this->hasOne(Position::class,'position_id','position_id');
     }
 
+    public function department() {
+        return $this->belongsTo(Department::class,'department_id','department_id');
+    }
+
     public function course() {
         return $this->hasMany(EmployeeCourse::class,'emp_id','emp_id');
     }

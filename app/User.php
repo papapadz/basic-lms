@@ -42,4 +42,12 @@ class User extends Authenticatable
     public function courseReviewer() {
         return $this->hasMany(Reviewer::class,'user_id','id');
     }
+
+    public function employeeCourses() {
+        return $this->hasMany(EmployeeCourse::class,'emp_id','emp_id')->orderBy('created_at','desc')->with(['course']);
+    }
+
+    public function employeeQuizzes() {
+        return $this->hasMany(EmployeeQuiz::class,'emp_id','emp_id')->with('certificate');
+    }
 }
