@@ -58,7 +58,7 @@ return [
         'mysql_hris' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('HRIS_DB_HOST'),
+            'host' => 'localhost',
             'port' => '3306',
             'database' => 'hris',
             'username' => 'root',
