@@ -197,7 +197,7 @@ class QuizController extends Controller
         //if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
             $cert_date = Carbon::parse($quiz->created_at);
             $cert = $quiz->EmployeeQuiz->course->course_cert;
-            $mi = $quiz->EmployeeQuiz->employee->middlename ? ' '.$quiz->EmployeeQuiz->employee->middlename[0].'. ' : ' ';
+            $mi = $quiz->EmployeeQuiz->employee->middlename ? ' '.$quiz->EmployeeQuiz->employee->middlename[0].'. ' : '';
             $fields = array(
                 //'control_num' => 'Control No.: '.$quiz->control_num,
                 'name' => $quiz->EmployeeQuiz->employee->firstname.$mi.$quiz->EmployeeQuiz->employee->lastname,
