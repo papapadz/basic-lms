@@ -192,7 +192,7 @@ class QuizController extends Controller
 
     public function getCertificate($id) {
                 
-        $quiz = QuizCertificate::where('employee_quiz_id',$id)->first();
+        $quiz = QuizCertificate::find($id)->first();
 
         //if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
             $cert_date = Carbon::parse($quiz->created_at);
