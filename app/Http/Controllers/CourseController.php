@@ -90,13 +90,18 @@ class CourseController extends Controller
         $passed = false;
 
         //tracks the progress
-        $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
-        if($empCourse && $empCourse->finished_date==null)
-            $empCourse->update(['module_id'=>$module->id]);
-        else
-            EmployeeCourse::create([
-                'emp_id' => Auth::user()->emp_id, 'course_id' => $course->id, 'module_id' => $module->id
-            ]);
+        // $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
+        // if($empCourse && $empCourse->finished_date==null)
+        //     $empCourse->update(['module_id'=>$module->id]);
+        // else
+        //     EmployeeCourse::firstOrcreate([
+        //         'emp_id' => Auth::user()->emp_id, 'course_id' => $course->id, 'module_id' => $module->id
+        //     ]);
+        Employee::updateOrCreate([
+            'emp_id' => Auth::user()->emp_id, 'course_id' => $course->id,
+        ],[
+            'module_id' => $module->id
+        ]);
         
         //prepare random quiz questions
         if($module->module_type=='pre' || $module->module_type=='post') {
