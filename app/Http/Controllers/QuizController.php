@@ -192,9 +192,10 @@ class QuizController extends Controller
 
     public function getCertificate($id) {
                 
-        $quiz = QuizCertificate::find($id)->first();
-
+        $quiz = QuizCertificate::find($id);        
+        
         //if($quiz->EmployeeQuiz->verified_by && $quiz->EmployeeQuiz->verified_at) {
+        if($quiz) {
             $cert_date = Carbon::parse($quiz->created_at);
             $cert = $quiz->EmployeeQuiz->course->course_cert;
             $mi = $quiz->EmployeeQuiz->employee->middlename ? ' '.$quiz->EmployeeQuiz->employee->middlename[0].'. ' : '';
@@ -204,12 +205,17 @@ class QuizController extends Controller
                 //'position' => $quiz->EmployeeQuiz->employee->position->position_title,
                 //'body' => 'for participating in the Basic Life Support Training held on the '.$cert_date->format('jS').' day of '.$cert_date->format('F Y').' at the Mariano Marcos Memorial Hospital and Medical Center Online Learning Management System.'
             );
+            if($quiz->EmployeeQuiz->course->id == 1)
+                $fields = array_merge($fields, [
+                    'control_num' => 'Control No.: '.$quiz->control_num,
+                    'position' => $quiz->EmployeeQuiz->employee->position->position_title,
+                    'body' => 'for participating in the Basic Life Support Training held on the '.$cert_date->format('jS').' day of '.$cert_date->format('F Y').' at the Mariano Marcos Memorial Hospital and Medical Center Online Learning Management System.'
+                ]);
             $pdf = new FPDM(public_path($cert));
             $pdf->Load($fields, true);
             $pdf->Merge();
             $pdf->Output();
-        //} else
-        //return '<a href="'.url('/').'">PETRO is verifying your score, please wait for the verification process. Thank you</a>';
+        } else return redirect()->back()->with('error','No certificate Found!');
     }
 
     public static function checkIfPassed($emp_id, $id) {

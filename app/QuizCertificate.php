@@ -11,7 +11,7 @@ class QuizCertificate extends Model
     ];
 
     public function EmployeeQuiz() {
-        return $this->belongsTo(EmployeeQuiz::class,'employee_quiz_id','id');
+        return $this->hasOne(EmployeeQuiz::class,'employee_quiz_id','id');
     }
 
     public function course() {
