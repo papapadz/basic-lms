@@ -223,9 +223,10 @@ class QuizController extends Controller
         $attempts = EmployeeQuiz::where([
             ['emp_id',Auth::user()->emp_id], ['course_id',$id], ['quiz_type','post']
         ])->orderBy('created_at')->get();
-            
+
         $url = url('/course/get/certificate');
         $passingRates = QuizPassingRate::select('score')->where([['course_id',$id],['exam_type','post']])->orderBy('attempt')->get()->toArray();
+                   
         foreach($attempts as $k => $attempt) {
             
             if($attempt->certificate)
@@ -242,6 +243,9 @@ class QuizController extends Controller
                     'passing_score' => $passingRates[$k]['score'],
                     'certificate_url' =>  $url
                 );
+            
+            if($k+1==count($passingRates))
+                break;
         }
 
         return array(

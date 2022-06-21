@@ -49,7 +49,6 @@
                     </td>
                     <td>
                         @if($enrollee->finished_date || ($enrollee->module->module_order/count($course->modules))==1)
-                            
                             @if($course->modules->where('module_type','post')->first())
                                 @if(count($enrollee->quiz->where('course_id',$course->id))>0)
                                     @php $certCounter = 0; @endphp
@@ -68,7 +67,18 @@
                                     <span class="text-warning"> <i>No Post Test Attempt yet</i></span>
                                 @endif
                             @elseif($course->needs_verification) 
-                                <button onclick="showReleaseForm('{{ $enrollee->emp_id }}','{{ $enrollee->course_id }}')" class="btn btn-xs btn-success">Release Certificate</button>
+                                @php $certCounter = 0; @endphp
+                                @foreach($enrollee->quiz->where('course_id',$course->id) as $enrolleeQuiz)
+                                    @if($enrolleeQuiz)
+                                        @if($enrolleeQuiz->certificate)
+                                            @php $certCounter++; @endphp
+                                            <a href="{{ route('get-certificate',$enrolleeQuiz->certificate->id) }}">{{ $enrolleeQuiz->certificate->control_num }}</a>
+                                        @endif
+                                    @endif
+                                @endforeach
+                                @if($certCounter==0)
+                                    <button onclick="showReleaseForm('{{ $enrollee->emp_id }}','{{ $enrollee->course_id }}')" class="btn btn-xs btn-success">Release Certificate</button>
+                                @endif
                             @endif
 
                         @else

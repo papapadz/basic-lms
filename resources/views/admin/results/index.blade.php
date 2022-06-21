@@ -26,13 +26,13 @@
                 <th></th>
             </tr>
             @forelse($results as $result)
-                
                 <tr>
                     <td>{{ $result->emp_id }}</td>
                     <td>{{ $result->employee->lastname }}, {{ $result->employee->firstname }} {{ $result->employee->middlename }}</td>
                     <td>{{ $result->course->course_name }}</td>
                     <td>
                         @php 
+                            $is_failed = false;
                             $is_verified = false;
                             $cert_id = null;
                             $cert_control_num = null;
@@ -40,20 +40,27 @@
                         
                         @foreach($result->lists($result->course_id,$result->emp_id) as $k => $attempt)
                             <span class="label label-info">Attempt #{{ $k+1 }}: {{ $attempt->score }}%</span> 
-                            <span class="label label-primary">Time:
+                            @if($attempt->course->modules->where('module_type','post')->first())
+                                <span class="label label-primary">Time:
                                 @if(Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at)<=0)
                                     {{ Carbon\Carbon::parse($attempt->start)->diffInSeconds($attempt->created_at) }} seconds
                                 @else
                                     {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins
                                 @endif
                             </span>
+                            @endif
                             <br>
                             @if(count($result->lists($result->course_id,$result->emp_id))==$k+1)
                                 @php
+                                if($attempt->certificate) {
                                     if($attempt->verified_at!=null && $attempt->verified_by!=null)
                                         $is_verified = true;
                                     $cert_id = $attempt->certificate->id;
                                     $cert_control_num = $attempt->certificate->control_num;
+                                    $is_failed = false;
+                                    break;
+                                } else
+                                    $is_failed = true;
                                 @endphp
                             @endif
                         @endforeach
@@ -67,6 +74,8 @@
                     <td>
                         @if($is_verified)
                             <a href="{{ route('get-certificate',$cert_id) }}">{{ $cert_control_num }}</a>
+                        @elseif($is_failed || count($result->lists($result->course_id,$result->emp_id))>count($result->course->passingRates->where('exam_type','post')))
+                            <small class="text-danger text-italic">Failed</small>
                         @else
                             <form method="POST" action="{{route('admin.results.verify', ['course_id'=>$result->course_id, 'emp_id'=>$result->emp_id])}}">
                                 @csrf

@@ -58,32 +58,56 @@
                         <li class="list-group-item">Attempt #{{ ($k+1) }} 
                             <span class="badge badge-info">Date: {{ Carbon\Carbon::parse($attempt->created_at)->toDateString() }}</span>
                             <span class="badge badge-primary">Score: {{ $attempt->score }}%</span>
-                            <span class="badge badge-warning">Time: 
-                                @if(Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at)<=0)
-                                    {{ Carbon\Carbon::parse($attempt->start)->diffInSeconds($attempt->created_at) }} seconds
-                                @else
-                                    {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins
-                                @endif
-                            </span>
-                            @if($attempt->score>=$passing[$k]->score)
-                                @if($attempt->course->needs_verification)
-                                    @if($attempt->verified_by!=null && $attempt->verified_at!=null)
-                                        <span class="badge badge-success">Passed</span>
-                                        <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                            @if($attempt->course->modules->where('module_type','post')->first())
+                                <span class="badge badge-warning">Time: 
+                                    @if(Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at)<=0)
+                                        {{ Carbon\Carbon::parse($attempt->start)->diffInSeconds($attempt->created_at) }} seconds
                                     @else
-                                        <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                                        {{ Carbon\Carbon::parse($attempt->start)->diffInMinutes($attempt->created_at) }} mins
+                                    @endif
+                                </span>
+                            @endif
+                            @if(count($attempts)<=count($passing))
+                                @if($attempt->score>=$passing[$k]->score)
+                                    @if($attempt->course->needs_verification)
+                                        @if($attempt->verified_by!=null && $attempt->verified_at!=null)
+                                            <span class="badge badge-success">Passed</span>
+                                            <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->certificate->id) }}">view certificate</a></span>
+                                        @else
+                                            <span class="badge badge-success">Passed - Awaiting Verification from PETRO</span>
+                                        @endif
+                                    @else
+                                        <span class="badge badge-success">Passed</span>
+                                        <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->certificate->id) }}">view certificate</a></span>
                                     @endif
                                 @else
-                                    <span class="badge badge-success">Passed</span>
-                                    <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->id) }}">view certificate</a></span>
+                                    <span class="badge badge-danger">Failed</span>
                                 @endif
-                            @else
-                                <span class="badge badge-danger">Failed</span>
                             @endif
                         </li>
                     @empty
-                    <i class="text-danger">Awaiting Results...</i>
+                        <i class="text-danger">Awaiting Results...</i>
                     @endforelse
+                        {{-- @foreach($empCourse->course->passingRates as $k => $coursePassing)
+                            @if(count($attempts)>0)
+                                @if($attempts[$k]->score >= $coursePassing->score)
+                                <li class="list-group-item">Attempt #{{ ($k+1) }}
+                                    <span class="badge badge-info">Date: {{ Carbon\Carbon::parse($attempts[$k]->created_at)->toDateString() }}</span>
+                                    <span class="badge badge-primary">Score: {{ $attempts[$k]->score }}%</span>
+                                    <span class="badge badge-warning">Time: 
+                                        @if(Carbon\Carbon::parse($attempts[$k]->start)->diffInMinutes($attempts[$k]->created_at)<=0)
+                                            {{ Carbon\Carbon::parse($attempts[$k]->start)->diffInSeconds($attempts[$k]->created_at) }} seconds
+                                        @else
+                                            {{ Carbon\Carbon::parse($attempts[$k]->start)->diffInMinutes($attempts[$k]->created_at) }} mins
+                                        @endif
+                                    </span>
+                                </li>
+                                @endif
+                            @else
+                                
+                            @endif
+                        @endforeach --}}
+                    
                 </div>
             </div>
         </div>

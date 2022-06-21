@@ -91,7 +91,7 @@ class CourseController extends Controller
 
         //tracks the progress
         $empCourse = EmployeeCourse::where([['emp_id',Auth::user()->emp_id],['course_id',$course->id]])->first();
-        if($empCourse)
+        if($empCourse && $empCourse->finished_date==null)
             $empCourse->update(['module_id'=>$module->id]);
         else
             EmployeeCourse::create([
@@ -298,7 +298,8 @@ class CourseController extends Controller
             'modules' => $modules,
             'course' => $course,
             'attempts' => $attempts,
-            'passing' => $passing
+            'passing' => $passing,
+            //'empCourse' => $empCourse
         ]);
 
     }
