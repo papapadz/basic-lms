@@ -68,7 +68,7 @@
                                     <span class="text-warning"> <i>No Post Test Attempt yet</i></span>
                                 @endif
                             @elseif($course->needs_verification) 
-                                <button onclick="showReleaseForm({{ $enrollee->emp_id }},{{ $enrollee->course_id }})" class="btn btn-xs btn-success">Release Certificate</button>
+                                <button onclick="showReleaseForm('{{ $enrollee->emp_id }}','{{ $enrollee->course_id }}')" class="btn btn-xs btn-success">Release Certificate</button>
                             @endif
 
                         @else
@@ -101,6 +101,7 @@ function setActive(id) {
 }
 
 function showReleaseForm(emp_id,course_id) {
+    
     Swal.fire({
   title: 'Enter score (1-100)',
   input: 'number',
