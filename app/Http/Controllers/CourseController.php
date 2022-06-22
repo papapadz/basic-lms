@@ -97,7 +97,7 @@ class CourseController extends Controller
         //     EmployeeCourse::firstOrcreate([
         //         'emp_id' => Auth::user()->emp_id, 'course_id' => $course->id, 'module_id' => $module->id
         //     ]);
-        Employee::updateOrCreate([
+        EmployeeCourse::updateOrCreate([
             'emp_id' => Auth::user()->emp_id, 'course_id' => $course->id,
         ],[
             'module_id' => $module->id
