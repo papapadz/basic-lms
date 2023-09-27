@@ -147,14 +147,14 @@
                                 <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
                                 <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
                               </svg> Courses Enrolled</h6>
-                            <span class="text-secondary">{{ count($user->employeeCourses) }}</span>
+                            <span class="text-secondary">{{ count($courses->where('deleted_at',null)) }}</span>
                           </li>
                       <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy" viewBox="0 0 16 16">
                             <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935zM3.504 1c.007.517.026 1.006.056 1.469.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.501.501 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667.03-.463.049-.952.056-1.469H3.504z"/>
                           </svg> Courses Finished</h6>
                         <span class="text-secondary">
-                            {{ count($user->employeeCourses->where('finished_date','!=',null)) }}
+                            {{ count($courses->where('finished_date','!=',null)) }}
                         </span>
                       </li>
                       <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
@@ -164,10 +164,12 @@
                           </svg> Certificates Earned</h6>
                         <span class="text-secondary">
                             @php $certificates = 0; @endphp
-                                @foreach($user->employeeQuizzes as $quiz)
+                                @foreach($courses as $ccourse)
+                                  @foreach($ccourse->quiz as $quiz)
                                     @if($quiz->certificate)
                                         @php $certificates++; @endphp
                                     @endif
+                                  @endforeach
                                 @endforeach
                             @php echo $certificates; @endphp
                         </span>
@@ -225,8 +227,8 @@
                   </div>
     
                   <div class="row gutters-sm">
-                    @foreach($user->employeeCourses as $empCourse)
-                        <a href="{{ route('summary',['course'=>$empCourse->course->course_slug]) }}">
+                    @foreach($courses as $empCourse)
+                        <a href="{{ route('user.summary',['course'=>$empCourse->course->course_slug,'id'=>$empCourse->id]) }}">
                             <div class="card mb-3">
                                 <div class="row no-gutters">
                                   <div class="col-md-4">
@@ -249,11 +251,24 @@
                                                 <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-activity" viewBox="0 0 16 16">
                                                     <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2Z"/>
                                                   </svg> Progress</h6>
-                                            <div class="col-md-6">
-                                                <div class="progress w-100">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: {{ $empCourse->module->module_order/count($empCourse->course->modules) *100 }}%">{{ $empCourse->module->module_order }}  of {{ count($empCourse->course->modules) }}</div>
+                                            
+                                                @if($empCourse->deleted_at)
+                                                  @if($empCourse->file_id)
+                                                  <span class="text-success">Completed {{ Carbon\Carbon::parse($empCourse->finished_date)->toFormattedDateString() }}</span>
+                                                  @else
+                                                  <span class="text-danger">Cancelled {{ Carbon\Carbon::parse($empCourse->finished_date)->toFormattedDateString() }}</span>
+                                                  @endif
+                                                @else
+                                                  @if($empCourse->finished_date)
+                                                  <span class="text-success">Completed {{ Carbon\Carbon::parse($empCourse->finished_date)->toFormattedDateString() }}</span>
+                                                  @else
+                                                  <div class="col-md-6">
+                                                    <div class="progress w-100">
+                                                      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: {{ $empCourse->module->module_order/count($empCourse->course->modules) *100 }}%">{{ $empCourse->module->module_order }}  of {{ count($empCourse->course->modules) }}</div>
+                                                    </div>
                                                   </div>
-                                            </div>
+                                                  @endif
+                                                @endif
                                               
                                           </li>
                                     </div>

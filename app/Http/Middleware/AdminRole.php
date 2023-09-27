@@ -16,8 +16,15 @@ class AdminRole
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::User()->role==1 || Auth::User()->role==2)
+        if(Auth::User()->role==1)
             return $next($request);
-        return redirect()->back(); 
+        else if(Auth::User()->role==2) {
+            if(count(Auth::User()->courseReviewer)>0)
+                return $next($request);
+            else
+                return redirect()->route('homepage')->with('danger-message','You have not been assigned a course to manage yet, please contact the System Administrator. Thank you!');
+        }
+            
+        return redirect()->route('homepage')->with('danger-message','You are not allowed to access this page!');
     }
 }

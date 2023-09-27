@@ -33,6 +33,7 @@
         <form id="exam">
             @csrf
             <input type="text" name="time_start" value="{{ Carbon\Carbon::now()->toDateTimeString() }}" hidden>
+            <input type="text" name="emp_course_id" value="{{ $empCourse->id }}" hidden>
             <input type="text" name="course_id" value="{{ $course->id }}" hidden>
             <input type="text" name="quiz_type" value="{{ $module->module_type }}" hidden>
             @foreach($questions as $k => $question)
@@ -87,7 +88,7 @@ function save() {
 
     $.ajax({
         method:'post',
-        url: "{{ url('quiz/submit') }}",
+        url: "{{ route('quiz.submit') }}",
         data: form
     }).done(function(response) {
         

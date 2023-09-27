@@ -20,6 +20,7 @@
                                         <a target="_blank" class="text-white btn btn-lg btn-success" href="{{ $attempts['certificate_url'] }}">
                                             <i class="fa fa-trophy" aria-hidden="true"></i>  view certificate
                                         </a>
+                                        <button type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#retryModal">Try again</button>
                                     @else
                                         <button type="button" class="btn btn-warning" disabled>PETRO is still verifying results</button>
                                     @endif
@@ -27,6 +28,7 @@
                                     <a target="_blank" class="text-white btn btn-lg btn-success" href="{{ $attempts['certificate_url'] }}">
                                         <i class="fa fa-trophy" aria-hidden="true"></i>  view certificate
                                     </a>
+                                    <button type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#retryModal">Try again</button>
                                 @endif
                             @elseif($attempts['attempts']<count($course->passingRates) || $empCourse)
                                 <a class="btn btn-info btn-lg" href="{{ $url }}">
@@ -97,6 +99,39 @@
         </div>
     </div>
 </div>
+
+    <!-- Modal -->
+    @if($empCourse)
+    <form method="post" action="{{ route('certificate.upload', $empCourse->id) }}" enctype="multipart/form-data">
+        @csrf
+        <div class="modal fade" id="retryModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Try the course again?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">    
+                        <div class="form-row mb-2">
+                            <label>Remarks</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>                
+                        <div class="form-row">
+                            <label>Upload Recent Certificate</label>
+                            <input name="certificate" class="form-control" type="file" required accept="application/pdf"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        @endif
 @endsection
 
 @section('scripts')

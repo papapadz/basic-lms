@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\User;
 use App\Employee;
+use App\EmployeeCourse;
 
 class UserController extends Controller
 {
@@ -50,7 +51,13 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        return view('users.index')->with('user',$user);
+
+        $courses = EmployeeCourse::where('emp_id',$user->emp_id)->withTrashed()->get();
+        
+        return view('users.index')->with([
+            'user' => $user,
+            'courses' => $courses
+        ]);
     }
 
     /**

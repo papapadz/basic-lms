@@ -8,11 +8,11 @@ class EmployeeQuiz extends Model
 {
 
     protected $fillable = [
-        'emp_id', 'course_id', 'start', 'end', 'quiz_type', 'score', 'verified_by', 'verified_at'
+        'emp_id', 'emp_course_id', 'start', 'end', 'quiz_type', 'score', 'verified_by', 'verified_at'
     ];
 
     public function course() {
-        return $this->belongsTo(Course::class,'course_id','id');
+        return $this->hasOne(EmployeeCourse::class,'id','emp_course_id')->withTrashed()->with('course');
     }
 
     public function certificate() {

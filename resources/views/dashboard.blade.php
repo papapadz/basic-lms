@@ -28,7 +28,6 @@
             <div class="container">
                 <div class="row">
                 @forelse($courses as $course)
-
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
                             <a href="course/{{$course->course_slug}}"><img src="@if($course->course_image) {{ asset('images/courses/'.$course->course_image) }} @else {{asset('images/noimage.jpg')}} @endif" width="100%" height="225"/></a>
@@ -36,14 +35,24 @@
                                 <h4><a href="course/{{$course->course_slug}}">{{$course->course_name}}</a></h4>
                                 <p class="card-text">{{$course->course_description}}
                                 </p>
-                              
-                                @if($course->enrollees->where('emp_id',Auth::user()->emp_id)->first())
-                                    <a href="course/{{$course->course_slug}}"><button class="btn btn-success col-md-12">Resume Course</button></a>
-                                @elseif(count($course->modules)>=1 && $course->is_active) 
-                                    <a href="course/{{$course->course_slug}}"><button class="btn btn-info col-md-12">View Course</button></a>
+                                
+                                @if($course->is_active)
+                                    @php
+                                        $empCourse = Auth::user()->employeeCourses->where('course_id', $course->id)->first();
+                                    @endphp  
+                                    @if($empCourse)
+                                        @if($empCourse->finished_date)
+                                            <a href="course/{{$course->course_slug}}"><button class="btn btn-info col-md-12">View Course</button></a>
+                                        @else
+                                            <a href="course/{{$course->course_slug}}"><button class="btn btn-success col-md-12">Resume Course</button></a>
+                                        @endif
+                                    @else
+                                        <a href="course/{{$course->course_slug}}"><button class="btn btn-info col-md-12">View Course</button></a>
+                                    @endif
                                 @else
-                                <button class="btn btn-warning col-md-12" disabled>Coming Soon!</button>
+                                    <button class="btn btn-warning col-md-12" disabled>Coming Soon!</button>
                                 @endif
+                                
                             </div>
                         </div>
                     </div>
