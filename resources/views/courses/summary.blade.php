@@ -78,6 +78,7 @@
                                             <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->certificate->id) }}">view certificate</a></span>
                                         @else
                                             <span class="badge badge-success">Passed - Awaiting Verification</span>
+                                            <span class="badge badge-info"><a target="_blank" class="text-white" href="{{ url('/course/get/certificate/'.$attempt->certificate->id) }}">view certificate</a></span>
                                         @endif
                                     @else
                                         <span class="badge badge-success">Passed</span>

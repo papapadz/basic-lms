@@ -22,7 +22,10 @@
                                         </a>
                                         <button type="button" class="btn btn-lg btn-warning" data-toggle="modal" data-target="#retryModal">Try again</button>
                                     @else
-                                        <button type="button" class="btn btn-warning" disabled>PETRO is still verifying results</button>
+                                        <button type="button" class="btn btn-lg btn-warning" disabled>PETRO is still verifying results</button>
+                                        <a target="_blank" class="text-white btn btn-lg btn-success" href="{{ $attempts['certificate_url'] }}">
+                                            <i class="fa fa-trophy" aria-hidden="true"></i>  view certificate
+                                        </a>
                                     @endif
                                 @else
                                     <a target="_blank" class="text-white btn btn-lg btn-success" href="{{ $attempts['certificate_url'] }}">
@@ -79,7 +82,11 @@
                                     <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
                                     <i class="fa fa-check-circle text-success float-right"></i>
                                 @else
+                                    @if($module->module_slug=='post-test')
+                                    <a href="{{route('module', ['course' => $course->course_slug, 'module' => $module->module_slug])}}">{{$module->module_name}}</a>
+                                    @else
                                     {{$module->module_name}}
+                                    @endif
                                 @endif
                             @else
                                 {{$module->module_name}}

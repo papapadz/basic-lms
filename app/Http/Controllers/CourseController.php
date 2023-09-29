@@ -362,7 +362,7 @@ class CourseController extends Controller
     }
 
     public function viewEnrollee($employee_course_id) {
-        $empCourse = EmployeeCourse::where('id',$employee_course_id)->withTrashed()->get();
+        $empCourse = EmployeeCourse::where('id',$employee_course_id)->withTrashed()->first();
         $passing = QuizPassingRate::where([['course_id',$empCourse->course_id],['exam_type','post']])->orderBy('attempt')->get();
         $history = EmployeeCourse::where([['emp_id',$empCourse->emp_id],['course_id',$empCourse->course_id]])->orderBy('created_at','desc')->withTrashed()->get();
         
