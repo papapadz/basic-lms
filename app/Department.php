@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    protected $connection = 'mysql_hris';
-    protected $primaryKey = 'department_id';
-    public $table      = 'tbl_department';
-    
+    // protected $connection = 'mysql_hris';
+    // protected $primaryKey = 'department_id';
+    // public $table      = 'tbl_department';
+
+    protected $guarded = [];
+
     public function employees() {
-        return $this->hasMany(Employee::class,'department_id','department_id')->where('is_active','Y');
+        return $this->hasMany(Employee::class,'department_id')->where('is_active','Y');
     }
 
     public function division() {
-        return $this->belongsTo(Division::class,'division_id','division_id');
+        return $this->belongsTo(Division::class,'division_id');
     }
 }

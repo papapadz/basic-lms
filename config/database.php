@@ -12,7 +12,7 @@ return [
     | you may use many connections at once using the Database library.
     |
     */
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => 'mysql',
     /*
     |--------------------------------------------------------------------------
     | Database Connections
@@ -43,7 +43,7 @@ return [
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'ulearn'),
             'username' => env('DB_USERNAME', 'lms_root'),
-            'password' => env('DB_PASSWORD', 'p@ssw)rd-=-lms'),
+            'password' => env('DB_PASSWORD', 'P@ssw)rd-=-lms'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -57,16 +57,16 @@ return [
         ],
         'mysql_hris' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
+            // 'url' => '192.168.1.17',
             'host' => '192.168.1.17',
             'port' => '3306',
             'database' => 'hris',
             'username' => 'hris_root',
             'password' => 'p@ssw)rd-=-hris',
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
+            // 'unix_socket' => env('DB_SOCKET', ''),
+            // 'charset' => 'utf8mb4',
+            // 'collation' => 'utf8mb4_unicode_ci',
+            // 'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,

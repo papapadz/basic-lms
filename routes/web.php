@@ -83,4 +83,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(functi
             echo 'Updating Record '.$empCourse->id.'...<br>';
         }
     });
+
+    
 });
+
+Route::get('dashboard/sync/to/hris','AdminController@syncHRISData')->name('sync_to_hris');

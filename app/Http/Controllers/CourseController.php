@@ -38,7 +38,7 @@ class CourseController extends Controller
             $courses = Course::whereIn('id',$courseArr)->get();
         }
 
-        $years = ['2023','2022','2021','2020'];
+        $years = ['2025','2024','2023','2022','2021','2020'];
 
         return view('admin.index')->with([
             'courses' => $courses,
@@ -143,7 +143,7 @@ class CourseController extends Controller
                 ['emp_id',Auth::user()->emp_id], ['emp_course_id',$employeeCourse->id], ['quiz_type',$module->module_type]
             ])->orderBy('created_at')->get();
             
-            if(count($attempts)<count($passing)) {
+            if(count($attempts)<count($passing) || count($attempts)==0) {
 
                 if(count($attempts)>0) {
                     foreach($attempts as $k => $attempt)
@@ -152,22 +152,29 @@ class CourseController extends Controller
                             break;
                         }
                 }
+
                 if(!$passed) {
-                    $random = $course->quizzes->where('quiz_type', $module->module_type)->pluck('id')->toArray();
-                   
-                    if($module->module_type=='pre')
-                        if(count($random)<5) {
-                            $arr_q = $random;
-                        } else
-                            $arr_q = array_rand($random,5);
-                    else if($module->module_type=='post')
-                        if(count($random)<15) {
-                            $arr_q = $random;
-                        } else
-                            $arr_q = array_rand($random,15);
                     
-                    foreach($arr_q as $r) {
-                        $q = Quiz::find($r);
+                    if($module->module_type=='pre')
+                        $limit = 5;
+                    else
+                        $limit = 15;
+
+                    $random = Quiz::where([['quiz_type', $module->module_type],['course_id',$course->id]])->limit($limit)->get();
+                    $arr_q = $random->shuffle();
+                    
+                    // if($module->module_type=='pre')
+                    //     if(count($random)<=5) {
+                    //         $arr_q = $random;
+                    //     } else
+                    //         $arr_q = array_rand($random,5);
+                    // else if($module->module_type=='post')
+                    //     if(count($random)<=15) {
+                    //         $arr_q = $random;
+                    //     } else
+                    //         $arr_q = array_rand($random,15);
+                    
+                    foreach($arr_q as $q) {
                         
                         if($q)
                             array_push($questions,$q);

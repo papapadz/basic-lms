@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Division extends Model
 {
-    protected $connection = 'mysql_hris';
-    protected $primaryKey = 'division_id';
-    public $table      = 'tbl_division';
+    // protected $connection = 'mysql_hris';
+    // protected $primaryKey = 'division_id';
+    // public $table      = 'tbl_division';
     
+    protected $guarded = [];
+
     public function departments() {
-        return $this->hasMany(Department::class,'division_id','division_id');
+        return $this->hasMany(Department::class,'division_id');
     }
 
     public function employees() {
