@@ -217,10 +217,17 @@ class QuizController extends Controller
                     'position' => $quiz->EmployeeQuiz->employee->position->position_title,
                     'body' => 'for participating in the Basic Life Support Training held on the '.$cert_date->format('jS').' day of '.$cert_date->format('F Y').' at the Mariano Marcos Memorial Hospital and Medical Center Online Learning Management System.'
                 ]);
+            if($quiz->EmployeeQuiz->course->course->id == 5)
+                $fields = array_merge($fields, [
+                    'control_num' =>$quiz->control_num,
+                    'position' => $quiz->EmployeeQuiz->employee->position->position_title,
+                    'date' => $cert_date->toFormattedDateString()
+                ]);
             $pdf = new FPDM(public_path($cert));
-            $pdf->Load($fields, true);
+            $pdf->Load($fields, false);
             $pdf->Merge();
-            $pdf->Output();
+            ob_end_clean();
+            $pdf->Output('I',$quiz->control_num.'.pdf');
         } else return redirect()->back()->with('error','No certificate Found!');
     }
 
@@ -322,3 +329,4 @@ class QuizController extends Controller
         $emailController->send($quizCertificate);
     }
 }
+?>

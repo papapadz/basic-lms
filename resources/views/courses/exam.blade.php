@@ -1,5 +1,5 @@
 <div class="col-12 mb-2">
-    @if((count($attempts)>=count($passing)) || $passed)
+    @if(count($attempts)>0 && ((count($attempts)>=count($passing)) || $passed))
     <br>
         {{-- @if($passed)
             <div class="alert alert-success">View your Certificate of Completion <strong><a target="_blank" href="{{ url('/course/get/certificate/'.$course->id) }}">here.</a></strong></div>
@@ -28,7 +28,7 @@
                             @endif
                 </li>
             @endforeach
-          </ul>
+        </ul>
     @else
         <form id="exam">
             @csrf
